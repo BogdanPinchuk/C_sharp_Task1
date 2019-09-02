@@ -146,6 +146,7 @@ namespace App1
         /// </summary>
         /// <param name="puthFile">Шлях до БД</param>
         /// <param name="table">Назва таблиці</param>
+        /// <param name="products">Масив продуктів</param>
         private static void AddProduct(string puthFile, string table, List<IProduct> products)
         {
             // створення з'єднання
@@ -222,7 +223,8 @@ namespace App1
         /// </summary>
         /// <param name="puthFile">Шлях до БД</param>
         /// <param name="table">Назва таблиці</param>
-        private static void ChangeProduct(string puthFile, string table, IProduct products)
+        /// <param name="product">Продукт</param>
+        private static void ChangeProduct(string puthFile, string table, IProduct product)
         {
             // створення з'єднання
             using (OleDbConnection conn = new OleDbConnection(puthFile))
@@ -234,8 +236,50 @@ namespace App1
                 OleDbCommand comm = conn.CreateCommand();
 
                 // задання команди
-                comm.CommandText = $"Update {table} Set Name = '{products.Name}'," +
-                    $" Price = '{products.Price}' Where [ID] = {products.ID}";
+                comm.CommandText = $"Update {table} Set Name = '{product.Name}'," +
+                    $" Price = '{product.Price}' Where [ID] = {product.ID}";
+                // виконання sql запиту
+                comm.ExecuteNonQuery();
+            }
+
+        }
+        #endregion
+
+        #region Delete
+        /// <summary>
+        /// Видалення напою по id
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="puthFile">Шлях до БД</param>
+        public static void DeleteDrink(int id, string puthFile)
+            => DeleteProduct(puthFile, "Drinks", id);
+
+        /// <summary>
+        /// Видалення добавки по id
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="puthFile">Шлях до БД</param>
+        public static void ChangeAdditiv(int id, string puthFile)
+            => DeleteProduct(puthFile, "Additivs", id);
+
+        /// <summary>
+        /// Видалення продукту по id
+        /// </summary>
+        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="table">Назва таблиці</param>
+        private static void DeleteProduct(string puthFile, string table, int id)
+        {
+            // створення з'єднання
+            using (OleDbConnection conn = new OleDbConnection(puthFile))
+            {
+                // відкриття
+                conn.Open();
+
+                // створення об'єкта керування
+                OleDbCommand comm = conn.CreateCommand();
+
+                // задання команди
+                comm.CommandText = $"Delete From {table} Where '[ID] == {id}'";
                 // виконання sql запиту
                 comm.ExecuteNonQuery();
             }
