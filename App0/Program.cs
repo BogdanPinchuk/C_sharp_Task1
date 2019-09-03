@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using App0.Product;
+using App0.Calculate;
 
 /// <summary>
 /// Базовий додаток
@@ -40,10 +41,9 @@ namespace App0
             // якщо БД завантажена успошно запускаємо обробку запитів користувача
             if (LoadDataBase.Succesfull)
             {
-                // Запуск інформатора з оновленням БД
+                // Запуск інформатора який оновлюватиме БД
                 Checker checker = new Checker(file);
             }
-
 
             // delay
             Console.ReadKey(true);
