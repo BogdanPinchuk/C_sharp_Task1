@@ -50,12 +50,12 @@ namespace App1
         /// <summary>
         /// Створення таблиць згідно завданню
         /// </summary>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         /// <returns></returns>
-        public static void CreateTable(string puthFile)
+        public static void CreateTable(string pathFile)
         {
             // створення з'єднання
-            using (OleDbConnection conn = new OleDbConnection(puthFile))
+            using (OleDbConnection conn = new OleDbConnection(pathFile))
             {
                 // відкриття
                 conn.Open();
@@ -98,10 +98,10 @@ namespace App1
         /// <param name="price">ціна</param>
         /// <param name="size">розмів виміру мг/мл</param>
         /// <param name="type">тип виміру вага/об'єм</param>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         public static void AddDrink(int id, string name, double price,
-            double size, TypeValue type, string puthFile)
-            => AddDrink(new SProduct(id, name, price, size, type), puthFile);
+            double size, TypeValue type, string pathFile)
+            => AddDrink(new SProduct(id, name, price, size, type), pathFile);
 
         /// <summary>
         /// Додавання добавки
@@ -111,53 +111,53 @@ namespace App1
         /// <param name="price">ціна</param>
         /// <param name="size">розмів виміру мг/мл</param>
         /// <param name="type">тип виміру вага/об'єм</param>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         public static void AddAdditiv(int id, string name, double price,
-            double size, TypeValue type, string puthFile)
-            => AddAdditiv(new SProduct(id, name, price, size, type), puthFile);
+            double size, TypeValue type, string pathFile)
+            => AddAdditiv(new SProduct(id, name, price, size, type), pathFile);
 
         /// <summary>
         /// Додавання напою
         /// </summary>
         /// <param name="product">Напій</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void AddDrink(IProduct product, string puthFile)
-            => AddRangeDrink(new List<IProduct>() { product }, puthFile);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void AddDrink(IProduct product, string pathFile)
+            => AddRangeDrink(new List<IProduct>() { product }, pathFile);
 
         /// <summary>
         /// Додавання добавки
         /// </summary>
         /// <param name="product">Напій</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void AddAdditiv(IProduct product, string puthFile)
-            => AddRangeAdditiv(new List<IProduct>() { product }, puthFile);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void AddAdditiv(IProduct product, string pathFile)
+            => AddRangeAdditiv(new List<IProduct>() { product }, pathFile);
 
         /// <summary>
         /// Додавання колекії продуктів
         /// </summary>
         /// <param name="array">Масив даних</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void AddRangeDrink(List<IProduct> products, string puthFile)
-            => AddProduct(puthFile, "Drinks", products);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void AddRangeDrink(List<IProduct> products, string pathFile)
+            => AddProduct(pathFile, "Drinks", products);
 
         /// <summary>
         /// Додавання колекії добавок
         /// </summary>
         /// <param name="array">Масив даних</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void AddRangeAdditiv(List<IProduct> products, string puthFile)
-            => AddProduct(puthFile, "Additivs", products);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void AddRangeAdditiv(List<IProduct> products, string pathFile)
+            => AddProduct(pathFile, "Additivs", products);
 
         /// <summary>
         /// Додавання продукту
         /// </summary>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         /// <param name="table">Назва таблиці</param>
         /// <param name="products">Масив продуктів</param>
-        private static void AddProduct(string puthFile, string table, List<IProduct> products)
+        private static void AddProduct(string pathFile, string table, List<IProduct> products)
         {
             // створення з'єднання
-            using (OleDbConnection conn = new OleDbConnection(puthFile))
+            using (OleDbConnection conn = new OleDbConnection(pathFile))
             {
                 // відкриття
                 conn.Open();
@@ -202,18 +202,18 @@ namespace App1
         /// <param name="price">ціна</param>
         /// <param name="size">розмів виміру мг/мл</param>
         /// <param name="type">тип виміру вага/об'єм</param>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         public static void ChangeDrink(int id, string name, double price,
-            double size, TypeValue type, string puthFile)
-            => ChangeDrink(new SProduct(id, name, price, size, type), puthFile);
+            double size, TypeValue type, string pathFile)
+            => ChangeDrink(new SProduct(id, name, price, size, type), pathFile);
 
         /// <summary>
         /// Зміна напою по id
         /// </summary>
         /// <param name="product">Напій</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void ChangeDrink(IProduct product, string puthFile)
-            => ChangeProduct(puthFile, "Drinks", product);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void ChangeDrink(IProduct product, string pathFile)
+            => ChangeProduct(pathFile, "Drinks", product);
 
         /// <summary>
         /// Додавання добавки по id
@@ -223,29 +223,29 @@ namespace App1
         /// <param name="price">ціна</param>
         /// <param name="size">розмів виміру мг/мл</param>
         /// <param name="type">тип виміру вага/об'єм</param>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         public static void ChangeAdditiv(int id, string name, double price,
-            double size, TypeValue type, string puthFile)
-            => ChangeAdditiv(new SProduct(id, name, price, size, type), puthFile);
+            double size, TypeValue type, string pathFile)
+            => ChangeAdditiv(new SProduct(id, name, price, size, type), pathFile);
 
         /// <summary>
         /// Додавання добавки по id
         /// </summary>
         /// <param name="product">Напій</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void ChangeAdditiv(IProduct product, string puthFile)
-            => ChangeProduct(puthFile, "Additivs", product);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void ChangeAdditiv(IProduct product, string pathFile)
+            => ChangeProduct(pathFile, "Additivs", product);
 
         /// <summary>
         /// Зміна продукту по id
         /// </summary>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         /// <param name="table">Назва таблиці</param>
         /// <param name="product">Продукт</param>
-        private static void ChangeProduct(string puthFile, string table, IProduct product)
+        private static void ChangeProduct(string pathFile, string table, IProduct product)
         {
             // створення з'єднання
-            using (OleDbConnection conn = new OleDbConnection(puthFile))
+            using (OleDbConnection conn = new OleDbConnection(pathFile))
             {
                 // відкриття
                 conn.Open();
@@ -269,27 +269,27 @@ namespace App1
         /// Видалення напою по id
         /// </summary>
         /// <param name="id">ID</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void DeleteDrink(int id, string puthFile)
-            => DeleteProduct(puthFile, "Drinks", id);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void DeleteDrink(int id, string pathFile)
+            => DeleteProduct(pathFile, "Drinks", id);
 
         /// <summary>
         /// Видалення добавки по id
         /// </summary>
         /// <param name="id">ID</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void DeleteAdditiv(int id, string puthFile)
-            => DeleteProduct(puthFile, "Additivs", id);
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void DeleteAdditiv(int id, string pathFile)
+            => DeleteProduct(pathFile, "Additivs", id);
 
         /// <summary>
         /// Видалення продукту по id
         /// </summary>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         /// <param name="table">Назва таблиці</param>
-        private static void DeleteProduct(string puthFile, string table, int id)
+        private static void DeleteProduct(string pathFile, string table, int id)
         {
             // створення з'єднання
-            using (OleDbConnection conn = new OleDbConnection(puthFile))
+            using (OleDbConnection conn = new OleDbConnection(pathFile))
             {
                 // відкриття
                 conn.Open();
@@ -308,27 +308,27 @@ namespace App1
         /// <summary>
         /// Очищення таблиці напоїв
         /// </summary>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void DeleteAllDrink(string puthFile)
-            => DeleteAllProduct(puthFile, "Drinks");
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void DeleteAllDrink(string pathFile)
+            => DeleteAllProduct(pathFile, "Drinks");
 
         /// <summary>
         /// Очищення таблиці добавок
         /// </summary>
         /// <param name="id">ID</param>
-        /// <param name="puthFile">Шлях до БД</param>
-        public static void DeleteAllAdditiv(string puthFile)
-            => DeleteAllProduct(puthFile, "Additivs");
+        /// <param name="pathFile">Шлях до БД</param>
+        public static void DeleteAllAdditiv(string pathFile)
+            => DeleteAllProduct(pathFile, "Additivs");
 
         /// <summary>
         /// Очищення таблиці продуктів
         /// </summary>
-        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="pathFile">Шлях до БД</param>
         /// <param name="table">Назва таблиці</param>
-        private static void DeleteAllProduct(string puthFile, string table)
+        private static void DeleteAllProduct(string pathFile, string table)
         {
             // створення з'єднання
-            using (OleDbConnection conn = new OleDbConnection(puthFile))
+            using (OleDbConnection conn = new OleDbConnection(pathFile))
             {
                 // відкриття
                 conn.Open();

@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// Приітка. В реальності бажано б ще задати грамування
-// і об'єм, де враховуваллося б об'єм стаканчика, маса
-// та об'єми добавок, об'єм самих напоїв, так як 
-// є можливість розлиття інградієнтів. Але в ТЗ цього 
-// не вказано. Тому можна припустити, що тут все 
-// визначаєть в порціях, а розлиття залежить від користувача
+using App0.Product;
 
 /// <summary>
 /// Базовий додаток
@@ -23,9 +19,23 @@ namespace App0
             // Join Unicode
             Console.OutputEncoding = Encoding.Unicode;
 
+            #region Установка культури
+            // В умові вказані $ але можливо 
+            // треба використовувати регіональну валюту - гривні
+            RegionInfo region = RegionInfo.CurrentRegion;
+            // встановити культури USA для вткористання доларів?
+            if (true)
+            {
+                region = new RegionInfo("en-US");
+            }
+            #endregion
 
+            // назва файлу БД з можливим повним шляхом, але без розширення
+            string pathFile = "Product";
 
-
+            // завантаження БД
+            LoadDataBase loadDB = new LoadDataBase(pathFile);
+            
 
             // delay
             Console.ReadKey(true);

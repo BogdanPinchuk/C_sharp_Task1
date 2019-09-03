@@ -43,9 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Product\Extention.cs" />
     <Compile Include="Product\IAdditiv.cs" />
     <Compile Include="Product\IDrink.cs" />
     <Compile Include="Product\IProduct.cs" />
+    <Compile Include="Product\LoadDataBase.cs" />
+    <Compile Include="Product\SAdditiv.cs" />
+    <Compile Include="Product\SDrink.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

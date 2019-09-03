@@ -4,43 +4,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App1.Product
+namespace App0.Product
 {
     /// <summary>
-    /// Продукт
+    /// Структура напою
     /// </summary>
-    struct SProduct : IProduct
+    struct SDrink : IDrink
     {
         /// <summary>
-        /// ID - продукту
+        /// ID - напою
         /// </summary>
         public int ID { get; private set; }
         /// <summary>
-        /// Назва продукту
+        /// Назва напою
         /// </summary>
         public string Name { get; private set; }
         /// <summary>
-        /// Ціна продукту
+        /// Ціна напою
         /// </summary>
         public double Price { get; private set; }
         /// <summary>
-        /// Тип в якому вимірюється продукт
+        /// Тип в якому вимірюється напій
         /// </summary>
-        public TypeValue TypeOfValue { get; private set; }
+        public double Size { get; private set; }
         /// <summary>
         /// Величина виміру
         /// </summary>
-        public double Size { get; private set; }
+        public TypeValue TypeOfValue { get; private set; }
 
         /// <summary>
-        /// Додавання продукту
+        /// Додавання напою
         /// </summary>
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
         /// <param name="size">розмів виміру мг/мл</param>
         /// <param name="type">тип виміру вага/об'єм</param>
-        public SProduct(int id, string name, double price,
+        public SDrink(int id, string name, double price,
             double size, TypeValue type)
         {
             this.ID = id;
