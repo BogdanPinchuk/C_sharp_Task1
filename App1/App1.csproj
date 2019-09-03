@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateDB.cs" />
+    <Compile Include="Product\Extention.cs" />
     <Compile Include="Product\IProduct.cs" />
     <Compile Include="Product\SProduct.cs" />
     <Compile Include="Program.cs" />

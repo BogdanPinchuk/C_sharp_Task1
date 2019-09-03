@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
+using System.Data.Odbc;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -65,7 +66,7 @@ namespace App1
                 // створення таблиці Drink
                 try
                 {
-                    comm.CommandText = "Create table Drinks(ID int not null, Name varchar(50), Price real)";
+                    comm.CommandText = "Create table Drinks(ID int not null, Name varchar(50), Price real, SizeOf real, TypeOf bit)";
                     // виконання sql запиту
                     comm.ExecuteNonQuery();
                 }
@@ -77,7 +78,7 @@ namespace App1
                 // створення таблиці Additiv
                 try
                 {
-                    comm.CommandText = "Create table Additivs(ID int not null, Name varchar(50), Price real)";
+                    comm.CommandText = "Create table Additivs(ID int not null, Name varchar(50), Price real, SizeOf real, TypeOf bit)";
                     // виконання sql запиту
                     comm.ExecuteNonQuery();
                 }
@@ -95,9 +96,12 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
+        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="puthFile">Шлях до БД</param>
-        public static void AddDrink(int id, string name, double price, string puthFile)
-            => AddDrink(new SProduct(id, name, price) as IProduct, puthFile);
+        public static void AddDrink(int id, string name, double price,
+            double size, TypeValue type, string puthFile)
+            => AddDrink(new SProduct(id, name, price, size, type), puthFile);
 
         /// <summary>
         /// Додавання добавки
@@ -105,9 +109,12 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
+        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="puthFile">Шлях до БД</param>
-        public static void AddAdditiv(int id, string name, double price, string puthFile)
-            => AddAdditiv(new SProduct(id, name, price) as IProduct, puthFile);
+        public static void AddAdditiv(int id, string name, double price,
+            double size, TypeValue type, string puthFile)
+            => AddAdditiv(new SProduct(id, name, price, size, type), puthFile);
 
         /// <summary>
         /// Додавання напою
@@ -161,18 +168,23 @@ namespace App1
                 foreach (var i in products)
                 {
                     // перевірка ID (унікальний номер)
-                    comm.CommandText = $"Select * From {table} Where 'ID == {i.ID}'";
+                    comm.CommandText = $"Select * From {table} Where ID in ({i.ID})";
+                    // виконання sql запиту
+                    comm.ExecuteNonQuery();
+
                     // отримання даних
-                    OleDbDataReader reader = comm.ExecuteReader();
-                    // переврка на явності даних, якщо є то продовжуємо аналізувати інші дані
-                    if (reader.HasRows)
+                    using (OleDbDataReader reader = comm.ExecuteReader())
                     {
-                        continue;
+                        // переврка на явності даних, якщо є то продовжуємо аналізувати інші дані
+                        if (reader.HasRows)
+                        {
+                            continue;
+                        }
                     }
 
                     // задання команди
-                    comm.CommandText = $"Insert Into {table}([ID], Name, Price)" +
-                        $"Values({i.ID}, '{i.Name}', '{i.Price}')";
+                    comm.CommandText = $"Insert Into {table}([ID], Name, Price, SizeOf, TypeOf)" +
+                        $"Values('{i.ID}', '{i.Name}', '{i.Price}', '{i.Size}', {i.TypeOfValue.ConvertToBool()})";
                     // виконання sql запиту
                     comm.ExecuteNonQuery();
                 }
@@ -188,9 +200,12 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
+        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="puthFile">Шлях до БД</param>
-        public static void ChangeDrink(int id, string name, double price, string puthFile)
-            => ChangeDrink(new SProduct(id, name, price) as IProduct, puthFile);
+        public static void ChangeDrink(int id, string name, double price,
+            double size, TypeValue type, string puthFile)
+            => ChangeDrink(new SProduct(id, name, price, size, type), puthFile);
 
         /// <summary>
         /// Зміна напою по id
@@ -206,9 +221,12 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
+        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="puthFile">Шлях до БД</param>
-        public static void ChangeAdditiv(int id, string name, double price, string puthFile)
-            => ChangeAdditiv(new SProduct(id, name, price) as IProduct, puthFile);
+        public static void ChangeAdditiv(int id, string name, double price,
+            double size, TypeValue type, string puthFile)
+            => ChangeAdditiv(new SProduct(id, name, price, size, type), puthFile);
 
         /// <summary>
         /// Додавання добавки по id
@@ -237,7 +255,8 @@ namespace App1
 
                 // задання команди
                 comm.CommandText = $"Update {table} Set Name = '{product.Name}'," +
-                    $" Price = '{product.Price}' Where [ID] = {product.ID}";
+                    $" Price = '{product.Price}', SizeOf = '{product.Size}'," +
+                    $" TypeOf = {product.TypeOfValue.ConvertToBool()} Where [ID] = {product.ID}";
                 // виконання sql запиту
                 comm.ExecuteNonQuery();
             }
@@ -259,7 +278,7 @@ namespace App1
         /// </summary>
         /// <param name="id">ID</param>
         /// <param name="puthFile">Шлях до БД</param>
-        public static void ChangeAdditiv(int id, string puthFile)
+        public static void DeleteAdditiv(int id, string puthFile)
             => DeleteProduct(puthFile, "Additivs", id);
 
         /// <summary>
@@ -279,7 +298,46 @@ namespace App1
                 OleDbCommand comm = conn.CreateCommand();
 
                 // задання команди
-                comm.CommandText = $"Delete From {table} Where '[ID] == {id}'";
+                comm.CommandText = $"Delete From {table} Where [ID] = {id}";
+                // виконання sql запиту
+                comm.ExecuteNonQuery();
+            }
+
+        }
+
+        /// <summary>
+        /// Очищення таблиці напоїв
+        /// </summary>
+        /// <param name="puthFile">Шлях до БД</param>
+        public static void DeleteAllDrink(string puthFile)
+            => DeleteAllProduct(puthFile, "Drinks");
+
+        /// <summary>
+        /// Очищення таблиці добавок
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="puthFile">Шлях до БД</param>
+        public static void DeleteAllAdditiv(string puthFile)
+            => DeleteAllProduct(puthFile, "Additivs");
+
+        /// <summary>
+        /// Очищення таблиці продуктів
+        /// </summary>
+        /// <param name="puthFile">Шлях до БД</param>
+        /// <param name="table">Назва таблиці</param>
+        private static void DeleteAllProduct(string puthFile, string table)
+        {
+            // створення з'єднання
+            using (OleDbConnection conn = new OleDbConnection(puthFile))
+            {
+                // відкриття
+                conn.Open();
+
+                // створення об'єкта керування
+                OleDbCommand comm = conn.CreateCommand();
+
+                // задання команди
+                comm.CommandText = $"Delete From {table}";
                 // виконання sql запиту
                 comm.ExecuteNonQuery();
             }
