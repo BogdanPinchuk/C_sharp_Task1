@@ -31,15 +31,17 @@ namespace App0
             #endregion
 
             // назва файлу БД з можливим повним шляхом, але без розширення
-            string pathFile = "Product";
+            string path = string.Empty, // шлях до папки
+                file = "Product";       // назва файлу
 
             // завантаження БД
-            LoadDataBase.UpLoadDataBase(pathFile);
+            LoadDataBase.UpLoadDataBase(path + file);
 
             // якщо БД завантажена успошно запускаємо обробку запитів користувача
             if (LoadDataBase.Succesfull)
             {
-
+                // Запуск інформатора з оновленням
+                Checker checker = new Checker(file);
             }
 
 

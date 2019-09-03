@@ -68,6 +68,15 @@ namespace App0.Product
             connect = "Provider=Microsoft.Jet." +
                     $@"OLEDB.4.0; Data Source = {pathFile}.mdb";
 
+            // завантаження БД
+            UpLoadDataBase();
+        }
+
+        /// <summary>
+        /// Оновлення БД
+        /// </summary>
+        public static void UpLoadDataBase()
+        {
             // відовлення виключень, наприклад наявності файла
             try
             {
@@ -106,8 +115,8 @@ namespace App0.Product
             catch (OleDbException ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Скопіюйте файл БД в папку з *.exe файлом, " + 
-                    "або якщо файл БД відстуній створіть його за допомогою програми App1 " + 
+                Console.WriteLine("Скопіюйте файл БД в папку з *.exe файлом, " +
+                    "або якщо файл БД відстуній створіть його за допомогою програми App1 " +
                     "і тоді спопіюйте.");
             }
         }
