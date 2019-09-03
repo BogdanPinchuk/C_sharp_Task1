@@ -34,8 +34,14 @@ namespace App0
             string pathFile = "Product";
 
             // завантаження БД
-            LoadDataBase loadDB = new LoadDataBase(pathFile);
-            
+            LoadDataBase.UpLoadDataBase(pathFile);
+
+            // якщо БД завантажена успошно запускаємо обробку запитів користувача
+            if (LoadDataBase.Succesfull)
+            {
+
+            }
+
 
             // delay
             Console.ReadKey(true);
