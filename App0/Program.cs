@@ -45,6 +45,7 @@ namespace App0
                 Checker checker = new Checker(file);
             }
 
+
             // delay
             Console.ReadKey(true);
         }
