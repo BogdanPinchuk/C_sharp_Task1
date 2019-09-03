@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 using App0.Product;
 
+// Примітка. Checker дозволяє слідкувати за файлом БД,
+// і в разі внесених в нього змін чи перезапису оновлювати
+// внутрішню автономну БД, без перезапуску програми
+
 namespace App0
 {
     /// <summary>
@@ -56,6 +60,8 @@ namespace App0
             this.Path = path;
             // установка події на зміну файла + реакція (метод) на подію
             watcher.Changed += UpdateDB;
+            // додаємо відслідковування заміни файла іншим (наприклад при копіюванні)
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
 
             try
             {

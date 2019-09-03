@@ -77,6 +77,7 @@ namespace App0.Product
         /// </summary>
         public static void UpLoadDataBase()
         {
+            Console.WriteLine(DateTime.Now.ToString());
             // відовлення виключень, наприклад наявності файла
             try
             {
