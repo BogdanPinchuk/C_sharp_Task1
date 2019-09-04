@@ -82,6 +82,11 @@ namespace App0.Calculate
         private double glassC = 0;
 
         /// <summary>
+        /// Чи вибрано стаканчик
+        /// </summary>
+        private bool glassB = false;
+
+        /// <summary>
         /// Конструктор діалогу
         /// </summary>
         public Service(RegionInfo region)
@@ -138,6 +143,7 @@ namespace App0.Calculate
                 thread[i].Join();
             }
 
+            // запуск обробки введення даних
             new Thread(Entry).Start();
         }
 
@@ -356,6 +362,9 @@ namespace App0.Calculate
         /// </summary>
         private void Entry()
         {
+            // Примітка. Блокувати не потрібно, 
+            // так як не буде можливості оновити меню
+
             // діалог введення розміру стаканчика
             SizeGlass();
 
@@ -370,6 +379,12 @@ namespace App0.Calculate
         /// <returns></returns>
         private void SizeGlass()
         {
+            // перевірка чи вибрано стаканчик
+            if (glassB)
+            {
+                return;
+            }
+
             // значення наявні для введення відповідно до кількості стаканчиків
             int[] value = Enumerable.Range(1, Enum.GetValues(typeof(TypeOfGlass)).Length).ToArray();
 
@@ -451,6 +466,8 @@ namespace App0.Calculate
                         glassC = value[num - 1];
                         // вільне місце
                         capacity = glassC;
+                        // позначаємо, що розмір стакана вибрано
+                        glassB = true;
                         //TODO: написать внесення даних стаканчика
                         break;
                     }
