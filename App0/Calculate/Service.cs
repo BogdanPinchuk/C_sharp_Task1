@@ -121,7 +121,9 @@ namespace App0.Calculate
                 // напої
                 new Thread(Drink),
                 // добавки
-                new Thread(Aditiv)
+                new Thread(Aditiv),
+                // замовлення
+                new Thread(Order)
             };
 
             // запуск виконання
@@ -135,11 +137,6 @@ namespace App0.Calculate
             {
                 thread[i].Join();
             }
-
-            // обробка замовлення
-            thread[0] = new Thread(Order);
-            thread[0].Start();
-            thread[0].Join();
 
             new Thread(Entry).Start();
         }
@@ -359,14 +356,10 @@ namespace App0.Calculate
         /// </summary>
         private void Entry()
         {
-            // Блокуємо доступ іншим потокам
-            lock (block)
-            {
-                // діалог введення розміру стаканчика
-                SizeGlass();
+            // діалог введення розміру стаканчика
+            SizeGlass();
 
-                // діалог вибору напою
-            }
+            // діалог вибору напою
         }
 
         /// <summary>

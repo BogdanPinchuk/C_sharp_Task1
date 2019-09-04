@@ -55,7 +55,6 @@ namespace App0
             // запуск для тестування
             new Service(region).Menu();
 
-
             // delay
             Console.ReadKey(true);
         }
