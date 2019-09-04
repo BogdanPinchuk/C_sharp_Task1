@@ -360,6 +360,8 @@ namespace App0.Calculate
             SizeGlass();
 
             // діалог вибору напою
+
+            //TODO: Додати прапори для того щоб знати які дані введено
         }
 
         /// <summary>
