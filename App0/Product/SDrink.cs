@@ -49,5 +49,6 @@ namespace App0.Product
             this.Size = size;
             this.TypeOfValue = type;
         }
+
     }
 }

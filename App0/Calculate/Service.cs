@@ -103,14 +103,33 @@ namespace App0.Calculate
             // Очищення консолі
             Console.Clear();
 
-            // рамка
-            new Thread(Frame).Start();
+            // масив потоків
+            Thread[] thread = new Thread[]
+            {
+                // рамка
+                new Thread(Frame),
+                // стаканчик
+                new Thread(Glass),
+                // напої
+                new Thread(Drink),
+                // добавки
+                new Thread(Aditiv)
+            };
 
-            // стаканчик
-            new Thread(Glass).Start();
+            // запуск виконання
+            for (int i = 0; i < thread.Length; i++)
+            {
+                thread[i].Start();
+            }
 
-            // напої
-            new Thread(Drink).Start();
+            // очікуємо їх виконання
+            for (int i = 0; i < thread.Length; i++)
+            {
+                thread[i].Join();
+            }
+
+            // обробка замовлення
+            new Thread(Order).Start();
         }
 
         /// <summary>
@@ -147,6 +166,24 @@ namespace App0.Calculate
 
                 // після стаканчиків
                 Console.SetCursorPosition(0, 4);
+                for (int i = 0; i < Console.WindowWidth; i++)
+                {
+                    Console.Write('#');
+                }
+
+                // висота на яку треба далі спускатись
+                int height = 6 + Math.Max(drinks.Count, aditivs.Count);
+
+                // між напоями і добавками
+                for (int i = 0; i < height; i++)
+                {
+                    Console.SetCursorPosition(Console.WindowWidth / 2, i + 4);
+                    Console.Write('#');
+                }
+
+                height += 3;
+                // після продуктів
+                Console.SetCursorPosition(0, height);
                 for (int i = 0; i < Console.WindowWidth; i++)
                 {
                     Console.Write('#');
@@ -212,18 +249,82 @@ namespace App0.Calculate
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
                 StringBuilder drink = new StringBuilder()
-                    .Append("Напиток: ");
+                    .Append("Напитки: (70 млм)");
 
                 // Вивід
                 Console.Write(drink.ToString());
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Yellow;
 
                 foreach (var i in drinks)
                 {
                     // установка курсора
                     Console.SetCursorPosition(2, 7 + i.ID);
-                    Console.Write($"  {i.ID}. {i.Name} - {i.Price.ToString("C")}");
+                    Console.Write($"  {i.ID}. {i.Name,-4} - " +
+                        $"{i.Price.ToString("C2", new CultureInfo(region.Name))}");
                 }
 
+                // скидання налаштувань
+                Console.ResetColor();
+            }
+        }
+
+        /// <summary>
+        /// Відображення набору добавок
+        /// </summary>
+        private void Aditiv()
+        {
+            // Блокуємо доступ іншим потокам
+            lock (block)
+            {
+                // установка курсора
+                Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 6);
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Magenta;
+
+                StringBuilder aditiv = new StringBuilder()
+                    .Append("Добавки: (10 млм/10 мг)");
+
+                // Вивід
+                Console.Write(aditiv.ToString());
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Yellow;
+
+                foreach (var i in aditivs)
+                {
+                    // установка курсора
+                    Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 7 + i.ID);
+                    Console.Write($"  {i.ID}. {i.Name,-6} - " +
+                        $"{i.Price.ToString("C2", new CultureInfo(region.Name))}");
+                }
+
+                // скидання налаштувань
+                Console.ResetColor();
+            }
+        }
+
+        /// <summary>
+        /// Виведення замовлення клієнта
+        /// </summary>
+        private void Order()
+        {
+            // Блокуємо доступ іншим потокам
+            lock (block)
+            {
+                // установка курсора
+                Console.SetCursorPosition(2, 11 + Math.Max(drinks.Count, aditivs.Count));
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Green;
+
+                StringBuilder order = new StringBuilder()
+                    .Append("Ваш заказ: ");
+
+                // Вивід
+                Console.Write(order.ToString());
 
                 // скидання налаштувань
                 Console.ResetColor();
