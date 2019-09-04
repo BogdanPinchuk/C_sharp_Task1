@@ -20,6 +20,9 @@ namespace App0
             // Join Unicode
             Console.OutputEncoding = Encoding.Unicode;
 
+            // Заголовок програми
+            Console.Title = "Fresh drinks";
+
             #region Установка культури
             // В умові вказані $ але можливо 
             // треба використовувати регіональну валюту - гривні
@@ -31,6 +34,7 @@ namespace App0
             }
             #endregion
 
+            #region Temp hided
             // назва файлу БД з можливим повним шляхом, але без розширення
             string path = string.Empty, // шлях до папки
                 file = "Product";       // назва файлу
@@ -38,12 +42,18 @@ namespace App0
             // завантаження БД
             LoadDataBase.UpLoadDataBase(path + file);
 
+#if false
             // якщо БД завантажена успошно запускаємо обробку запитів користувача
             if (LoadDataBase.Succesfull)
             {
                 // Запуск інформатора який оновлюватиме БД
                 Checker checker = new Checker(file);
-            }
+            } 
+#endif
+            #endregion
+
+            // запуск для тестування
+            new Service().Menu();
 
 
             // delay
