@@ -72,6 +72,14 @@ namespace App0.Calculate
         /// </summary>
         private RegionInfo region;
 
+        /// <summary>
+        /// Вільне місце в стаканчику
+        /// </summary>
+        private double capacity = 0;
+        /// <summary>
+        /// Ємність вибраного стаканчика
+        /// </summary>
+        private double glassC = 0;
 
         /// <summary>
         /// Конструктор діалогу
@@ -129,7 +137,11 @@ namespace App0.Calculate
             }
 
             // обробка замовлення
-            new Thread(Order).Start();
+            thread[0] = new Thread(Order);
+            thread[0].Start();
+            thread[0].Join();
+
+            new Thread(Entry).Start();
         }
 
         /// <summary>
@@ -188,6 +200,14 @@ namespace App0.Calculate
                 {
                     Console.Write('#');
                 }
+
+                height += 4;
+                // після відображення замовлення
+                Console.SetCursorPosition(0, height);
+                for (int i = 0; i < Console.WindowWidth; i++)
+                {
+                    Console.Write('#');
+                }
             }
         }
 
@@ -210,7 +230,7 @@ namespace App0.Calculate
                     .Cast<TypeOfGlass>().ToArray();
 
                 StringBuilder glass = new StringBuilder()
-                    .Append("Имеются стаканчики такой емкости: ");
+                    .Append("Емкость стаканчика: ");
 
                 // Вивід
                 Console.Write(glass.ToString());
@@ -221,9 +241,12 @@ namespace App0.Calculate
                 // очищення
                 glass.Clear();
 
-                foreach (var i in array)
                 {
-                    glass.Append(" " + (int)i + ", ");
+                    int j = 1;
+                    foreach (var i in array)
+                    {
+                        glass.Append($" {j++}) " + (int)i + ", ");
+                    }
                 }
 
                 // вивід
@@ -332,6 +355,116 @@ namespace App0.Calculate
         }
 
         /// <summary>
+        /// Взаємодія з клієнтом
+        /// </summary>
+        private void Entry()
+        {
+            // Блокуємо доступ іншим потокам
+            lock (block)
+            {
+                // діалог введення розміру стаканчика
+                SizeGlass();
+
+                // діалог вибору напою
+            }
+        }
+
+        /// <summary>
+        /// Ввід розмірів стаканчика
+        /// </summary>
+        /// <returns></returns>
+        private void SizeGlass()
+        {
+            // значення наявні для введення відповідно до кількості стаканчиків
+            int[] value = Enumerable.Range(1, Enum.GetValues(typeof(TypeOfGlass)).Length).ToArray();
+
+            // перевірка введеного значення
+            do
+            {
+                // установка курсора
+                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+
+                // очистка
+                Console.Write(new string(' ', Console.WindowWidth - 4));
+
+                // установка курсора
+                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Red;
+
+                // Вивід
+                Console.Write("Введите размер стаканчика: ");
+
+                // скидання налаштувань
+                Console.ResetColor();
+
+                // введення клавіши
+                string key = Console.ReadLine();
+
+                // при натисканні виходу 
+                if (key.ToLower() == ConsoleKey.Q.ToString().ToLower())
+                {
+                    #region Обробка виходу
+                    do
+                    {
+
+                        // установка курсора
+                        Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+
+                        // очистка
+                        Console.Write(new string(' ', Console.WindowWidth - 4));
+
+                        // установка курсора
+                        Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+
+                        // зміна кольору
+                        Console.ForegroundColor = ConsoleColor.Red;
+
+                        // Вивід
+                        Console.Write("Выйти с програмы [y/n]: ");
+
+                        // введення клавіши
+                        key = Console.ReadLine();
+
+                        if (key.ToLower() == ConsoleKey.Y.ToString().ToLower())
+                        {
+                            Environment.Exit(0);
+                        }
+                        else if (key.ToLower() == ConsoleKey.N.ToString().ToLower())
+                        {
+                            break;
+                        }
+
+                        // скидання налаштувань
+                        Console.ResetColor();
+                    } while (true);
+
+                    // повторення запиту
+                    continue;
+                    #endregion
+                }
+
+                // введене число
+                int num = 0;
+                // при натисканні однієї із доступних клавіш
+                if (int.TryParse(key, out num))
+                {
+                    if (0 < num && num <= value.Length)
+                    {
+                        // ємність стаканчика
+                        glassC = value[num - 1];
+                        // вільне місце
+                        capacity = glassC;
+                        //TODO: написать внесення даних стаканчика
+                        break;
+                    }
+                }
+
+            } while (true);
+        }
+
+        /// <summary>
         /// Перевірка зміни розмірів консолі
         /// </summary>
         private void CheckerChange()
@@ -353,6 +486,8 @@ namespace App0.Calculate
 
                     // Запускаємо подію оновлення меню
                     ChangeSize.Invoke();
+
+                    //TODO: зробити перевірку на оновлення БД
                 }
             }
         }
