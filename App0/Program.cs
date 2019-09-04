@@ -53,7 +53,7 @@ namespace App0
             #endregion
 
             // запуск для тестування
-            new Service().Menu();
+            new Service(region).Menu();
 
 
             // delay

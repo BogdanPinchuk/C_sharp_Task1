@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 using App0.Product;
 using System.Data;
+using System.Globalization;
 
 namespace App0.Calculate
 {
     /// <summary>
     /// Стакани для наливання
     /// </summary>
-    enum Glass
+    enum TypeOfGlass
     {
         /// <summary>
         /// стакан на 110 мл
@@ -66,12 +67,24 @@ namespace App0.Calculate
         /// Список добавок
         /// </summary>
         private List<IProduct> aditivs = new List<IProduct>();
+        /// <summary>
+        /// Установка культури
+        /// </summary>
+        private RegionInfo region;
+
 
         /// <summary>
         /// Конструктор діалогу
         /// </summary>
-        public Service()
+        public Service(RegionInfo region)
         {
+            // Установка культури
+            this.region = region;
+
+            // завантаження даних з БД, лише після того як наявні 
+            // дані можна запускати побудову інтерфейсу
+            DownloadData();
+
             // запуск відображення меню
             new Thread(Menu).Start();
 
@@ -80,7 +93,6 @@ namespace App0.Calculate
             // запуск відслідковування змін
             new Thread(CheckerChange).Start();
 
-            DownloadData();
         }
 
         /// <summary>
@@ -88,12 +100,17 @@ namespace App0.Calculate
         /// </summary>
         public void Menu()
         {
-            // висота і ширина вікна консолі
-            int hight = Console.WindowHeight,
-                weigth = Console.WindowWidth;
+            // Очищення консолі
+            Console.Clear();
 
             // рамка
-            //new Thread(Frame).Start();
+            new Thread(Frame).Start();
+
+            // стаканчик
+            new Thread(Glass).Start();
+
+            // напої
+            new Thread(Drink).Start();
         }
 
         /// <summary>
@@ -101,12 +118,9 @@ namespace App0.Calculate
         /// </summary>
         private void Frame()
         {
-            // Блокуємо доступ інших потоків
+            // Блокуємо доступ іншим потокам
             lock (block)
             {
-                // Очищення консолі
-                Console.Clear();
-
                 // верх і низ
                 Console.SetCursorPosition(0, 0);
                 for (int i = 0; i < Console.WindowWidth; i++)
@@ -130,6 +144,89 @@ namespace App0.Calculate
                     Console.SetCursorPosition(Console.WindowWidth - 1, i);
                     Console.Write('#');
                 }
+
+                // після стаканчиків
+                Console.SetCursorPosition(0, 4);
+                for (int i = 0; i < Console.WindowWidth; i++)
+                {
+                    Console.Write('#');
+                }
+            }
+        }
+
+        /// <summary>
+        /// Відображення набору стаканчиків
+        /// </summary>
+        private void Glass()
+        {
+            // Блокуємо доступ іншим потокам
+            lock (block)
+            {
+                // установка курсора
+                Console.SetCursorPosition(2, 2);
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Green;
+
+                // Створення масиву даних стаканів
+                TypeOfGlass[] array = Enum.GetValues(typeof(TypeOfGlass))
+                    .Cast<TypeOfGlass>().ToArray();
+
+                StringBuilder glass = new StringBuilder()
+                    .Append("Имеются стаканчики такой емкости: ");
+
+                // Вивід
+                Console.Write(glass.ToString());
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Yellow;
+
+                // очищення
+                glass.Clear();
+
+                foreach (var i in array)
+                {
+                    glass.Append(" " + (int)i + ", ");
+                }
+
+                // вивід
+                Console.Write(glass.ToString().Trim().TrimEnd(',') + " мл");
+
+                // скидання налаштувань
+                Console.ResetColor();
+            }
+        }
+
+        /// <summary>
+        /// Відображення набору напоїв
+        /// </summary>
+        private void Drink()
+        {
+            // Блокуємо доступ іншим потокам
+            lock (block)
+            {
+                // установка курсора
+                Console.SetCursorPosition(2, 6);
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Cyan;
+
+                StringBuilder drink = new StringBuilder()
+                    .Append("Напиток: ");
+
+                // Вивід
+                Console.Write(drink.ToString());
+
+                foreach (var i in drinks)
+                {
+                    // установка курсора
+                    Console.SetCursorPosition(2, 7 + i.ID);
+                    Console.Write($"  {i.ID}. {i.Name} - {i.Price.ToString("C")}");
+                }
+
+
+                // скидання налаштувань
+                Console.ResetColor();
             }
         }
 
