@@ -76,6 +76,10 @@ namespace App0.Calculate
         /// Установка культури
         /// </summary>
         private RegionInfo region;
+        /// <summary>
+        /// Загальне замовлення
+        /// </summary>
+        private SOrder orderAll;
 
         /// <summary>
         /// Вільне місце в стаканчику
@@ -216,7 +220,7 @@ namespace App0.Calculate
                     Console.Write('#');
                 }
 
-                height += 4;
+                height += 6;
                 // після відображення замовлення
                 Console.SetCursorPosition(0, height);
                 for (int i = 0; i < Console.WindowWidth; i++)
@@ -355,6 +359,12 @@ namespace App0.Calculate
             // Блокуємо доступ іншим потокам
             lock (block)
             {
+                #region Продукти замовлення
+                // установка курсора
+                Console.SetCursorPosition(2, 11 + Math.Max(drinks.Count, aditivs.Count));
+                // очистка
+                Console.Write(new string(' ', Console.WindowWidth - 4));
+
                 // установка курсора
                 Console.SetCursorPosition(2, 11 + Math.Max(drinks.Count, aditivs.Count));
 
@@ -366,6 +376,41 @@ namespace App0.Calculate
 
                 // Вивід
                 Console.Write(order.ToString());
+                #endregion
+
+                #region Ціна
+                // установка курсора
+                Console.SetCursorPosition(2, 13 + Math.Max(drinks.Count, aditivs.Count));
+                // очистка
+                Console.Write(new string(' ', Console.WindowWidth - 4));
+
+                // установка курсора
+                Console.SetCursorPosition(2, 13 + Math.Max(drinks.Count, aditivs.Count));
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Red;
+
+                order = new StringBuilder()
+                    .Append("Стоимость: ");
+
+                // Вивід
+                Console.Write(order.ToString());
+                // TODO: додати лог-файл покупок
+                #endregion
+
+                #region Об'єм
+                // установка курсора
+                Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 13 + Math.Max(drinks.Count, aditivs.Count));
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Red;
+
+                order = new StringBuilder()
+                    .Append("Объем: ");
+
+                // Вивід
+                Console.Write(order.ToString());
+                #endregion
 
                 // скидання налаштувань
                 Console.ResetColor();
@@ -404,6 +449,9 @@ namespace App0.Calculate
                     case ConsoleKey.A:  // добавка
                         //TODO: додать вибір добавок
                         break;
+                    case ConsoleKey.P:  // оплата
+                        //TODO: додать оплату (запис в лог файл і очистка)
+                        goto case ConsoleKey.N; // перехід на очистку
                     case ConsoleKey.Q:  // виход
                         Environment.Exit(0);
                         break;
@@ -421,13 +469,13 @@ namespace App0.Calculate
             lock (block)
             {
                 // установка курсора
-                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
 
                 // очистка
                 Console.Write(new string(' ', Console.WindowWidth - 4));
 
                 // установка курсора
-                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
 
                 #region Menu of change
                 Print("Выберите: ", ConsoleColor.White);
@@ -625,27 +673,35 @@ namespace App0.Calculate
         {
             // очищення списку
             products.Clear();
-
-            // перебираємо всі рядки в таблиці
-            foreach (DataRow row in table.Rows)
+            
+            try
             {
-                // заносимо дані в колекції
-                if (typeof(T).Equals(typeof(SDrink)))
+                // перебираємо всі рядки в таблиці
+                foreach (DataRow row in table.Rows)
                 {
-                    products.Add(new SDrink((int)row["ID"], (string)row["Name"],
-                        (float)row["Price"], (float)row["SizeOf"],
-                        ((bool)row["TypeOf"]).ConvertToTypeValue()));
+                    // заносимо дані в колекції
+                    if (typeof(T).Equals(typeof(SDrink)))
+                    {
+                        products.Add(new SDrink((int)row["ID"], (string)row["Name"],
+                            (float)row["Price"], (float)row["SizeOf"],
+                            ((bool)row["TypeOf"]).ConvertToTypeValue()));
+                    }
+                    else if (typeof(T).Equals(typeof(SAdditiv)))
+                    {
+                        products.Add(new SAdditiv((int)row["ID"], (string)row["Name"],
+                            (float)row["Price"], (float)row["SizeOf"],
+                            ((bool)row["TypeOf"]).ConvertToTypeValue()));
+                    }
+                    else
+                    {
+                        throw new Exception("This type is not valid");
+                    }
                 }
-                else if (typeof(T).Equals(typeof(SAdditiv)))
-                {
-                    products.Add(new SAdditiv((int)row["ID"], (string)row["Name"],
-                        (float)row["Price"], (float)row["SizeOf"],
-                        ((bool)row["TypeOf"]).ConvertToTypeValue()));
-                }
-                else
-                {
-                    throw new Exception("This type is not valid");
-                }
+            }
+            catch (ArgumentException ex)
+            {
+                // сохранить в лог-файл
+                Console.WriteLine(ex.Message);
             }
         }
 

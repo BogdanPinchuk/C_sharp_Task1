@@ -95,18 +95,26 @@ namespace App0.Product
                     // синхронізуємо доступ до таблиць 
                     lock (Block)
                     {
-                        // Занесення даних в автономку БД
-                        Products = new DataSet(table[0]);
-                        adapter.Fill(Products, table[0]);
+                        //try
+                        //{
+                            // Занесення даних в автономку БД
+                            Products = new DataSet(table[0]);
+                            adapter.Fill(Products, table[0]);
 
-                        // задання команди
-                        comm.CommandText = $"Select * From {table[1]}";
+                            // задання команди
+                            comm.CommandText = $"Select * From {table[1]}";
 
-                        // передачею команди в адаптер
-                        adapter.SelectCommand = comm;
+                            // передачею команди в адаптер
+                            adapter.SelectCommand = comm;
 
-                        // Занесення даних в автономку БД
-                        adapter.Fill(Products, table[1]);
+                            // Занесення даних в автономку БД
+                            adapter.Fill(Products, table[1]);
+                        //}
+                        //catch (Exception)
+                        //{
+
+                        //    throw;
+                        //}
 
                     }
                     // повідомляємо про оновлення БД
