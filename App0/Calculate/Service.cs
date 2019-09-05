@@ -121,7 +121,7 @@ namespace App0.Calculate
         {
             // Очищення консолі
             Console.Clear();
-            
+
             // масив потоків
             Thread[] thread = new Thread[]
             {
@@ -377,15 +377,86 @@ namespace App0.Calculate
         /// </summary>
         private void Entry()
         {
-            // Примітка. Блокувати не потрібно, 
-            // так як не буде можливості оновити меню
+            // Примітка. Блокувати не потрібно там де э очыкування курсора, 
+            // так як не буде можливості оновити меню коректно без артефактів
 
-            // діалог введення розміру стаканчика
-            SizeGlass();
+            // Обробка натискань
+            while (true)
+            {
+                // Головне меню вибору
+                MenuChange();
 
-            // діалог вибору напою
+                // введення клавіши
+                ConsoleKey key = Console.ReadKey(true).Key;
 
-            //TODO: Додати прапори для того щоб знати які дані введено
+                // дія згідно вибору
+                switch (key)
+                {
+                    case ConsoleKey.N:  // очистить
+                        //TODO: додать очистку заказа
+                        break;
+                    case ConsoleKey.G:  // стаканчик
+                        //TODO: додать вибір/зміну стаканчика
+                        break;
+                    case ConsoleKey.D:  // напиток
+                        //TODO: додать вибір напою
+                        break;
+                    case ConsoleKey.A:  // добавка
+                        //TODO: додать вибір добавок
+                        break;
+                    case ConsoleKey.Q:  // виход
+                        Environment.Exit(0);
+                        break;
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Головне меню вибору
+        /// </summary>
+        private void MenuChange()
+        {
+            // Блокуємо доступ іншим потокам
+            lock (block)
+            {
+                // установка курсора
+                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+
+                // очистка
+                Console.Write(new string(' ', Console.WindowWidth - 4));
+
+                // установка курсора
+                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
+
+                #region Menu of change
+                Print("Выберите: ", ConsoleColor.White);
+                Print("N - очистить, ", ConsoleColor.Yellow);
+                Print("G - стаканчик, ", ConsoleColor.Green);
+                Print("D - напиток, ", ConsoleColor.Cyan);
+                Print("A - добавка, ", ConsoleColor.Magenta);
+                Print("Q - выход.", ConsoleColor.Red);
+
+                // скидання налаштувань
+                Console.ResetColor();
+
+                #endregion
+
+
+            }
+        }
+
+        /// <summary>
+        /// Швидке виведеня в консоль деяких частин меню
+        /// </summary>
+        /// <param name="s">рядок</param>
+        /// <param name="color">колір</param>
+        private void Print(string s, ConsoleColor color)
+        {
+            // зміна кольору
+            Console.ForegroundColor = color;
+            // Вивід
+            Console.Write(s);
         }
 
         /// <summary>
@@ -515,7 +586,7 @@ namespace App0.Calculate
                     ChangeSize.Invoke();
 
                 }
-                //TODO: зробити перевірку на оновлення БД
+
                 // якщо оновилася БД
                 if (LoadDataBase.IsUpdateDB)
                 {
