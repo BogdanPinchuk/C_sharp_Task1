@@ -48,13 +48,18 @@ namespace App0.Calculate
     class Service
     {
         /// <summary>
-        /// Делегат на відслідковування зміни розмірів консолі
+        /// Делегат на відслідковування зміни параметрів консолі і БД
         /// </summary>
-        private delegate void ChangeSizeConcole();
+        private delegate void ChangeData();
         /// <summary>
         /// Подія яка відбувається при зміні розмірів вікна консолі
         /// </summary>
-        private event ChangeSizeConcole ChangeSize;
+        private event ChangeData ChangeSize;
+        /// <summary>
+        /// Подія яка відбувається при зміні БД
+        /// </summary>
+        private event ChangeData ChangeDB;
+
         /// <summary>
         /// для синхронного доступу до консолі
         /// </summary>
@@ -101,8 +106,9 @@ namespace App0.Calculate
             // запуск відображення меню
             new Thread(Menu).Start();
 
-            // підпис на подію
-            ChangeSize += Menu;
+            // підписи на події
+            ChangeSize += Menu;         // оновлення меню
+            ChangeDB += DownloadData;   // оновлення БД
             // запуск відслідковування змін
             new Thread(CheckerChange).Start();
 
@@ -115,7 +121,7 @@ namespace App0.Calculate
         {
             // Очищення консолі
             Console.Clear();
-
+            
             // масив потоків
             Thread[] thread = new Thread[]
             {
@@ -152,9 +158,15 @@ namespace App0.Calculate
         /// </summary>
         private void Frame()
         {
+            // Примітка. Блокування потрібно, щоб не з'являтися артефакти 
+            // при масштабуванні вікна консолі
+
             // Блокуємо доступ іншим потокам
             lock (block)
             {
+                // зміна кольору
+                //Console.ForegroundColor = ConsoleColor.White;
+
                 // верх і низ
                 Console.SetCursorPosition(0, 0);
                 for (int i = 0; i < Console.WindowWidth; i++)
@@ -211,6 +223,9 @@ namespace App0.Calculate
                 {
                     Console.Write('#');
                 }
+
+                // скидання налаштувань
+                //Console.ResetColor();
             }
         }
 
@@ -311,7 +326,7 @@ namespace App0.Calculate
                 Console.ForegroundColor = ConsoleColor.Magenta;
 
                 StringBuilder aditiv = new StringBuilder()
-                    .Append("Добавки: (10 млм/10 мг)");
+                    .Append("Добавки: (10 мл/10 мг)");
 
                 // Вивід
                 Console.Write(aditiv.ToString());
@@ -344,7 +359,7 @@ namespace App0.Calculate
                 Console.SetCursorPosition(2, 11 + Math.Max(drinks.Count, aditivs.Count));
 
                 // зміна кольору
-                Console.ForegroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.Red;
 
                 StringBuilder order = new StringBuilder()
                     .Append("Ваш заказ: ");
@@ -401,7 +416,7 @@ namespace App0.Calculate
                 Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
 
                 // зміна кольору
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.White;
 
                 // Вивід
                 Console.Write("Введите размер стаканчика: ");
@@ -468,7 +483,7 @@ namespace App0.Calculate
                         capacity = glassC;
                         // позначаємо, що розмір стакана вибрано
                         glassB = true;
-                        //TODO: написать внесення даних стаканчика
+
                         break;
                     }
                 }
@@ -499,7 +514,17 @@ namespace App0.Calculate
                     // Запускаємо подію оновлення меню
                     ChangeSize.Invoke();
 
-                    //TODO: зробити перевірку на оновлення БД
+                }
+                //TODO: зробити перевірку на оновлення БД
+                // якщо оновилася БД
+                if (LoadDataBase.IsUpdateDB)
+                {
+                    // оновлюємо БД
+                    ChangeDB.Invoke();
+                    // оновлюємо меню
+                    ChangeSize.Invoke();
+                    // ставимо, що БД "застаріла"
+                    LoadDataBase.IsUpdateDB = false;
                 }
             }
         }
@@ -509,9 +534,13 @@ namespace App0.Calculate
         /// </summary>
         private void DownloadData()
         {
-            // завантаження даних з таблиць
-            ExstractingData<SDrink>(LoadDataBase.Products.Tables["Drinks"], drinks);
-            ExstractingData<SAdditiv>(LoadDataBase.Products.Tables["Additivs"], aditivs);
+            // 
+            lock (LoadDataBase.Block)
+            {
+                // завантаження даних з таблиць
+                ExstractingData<SDrink>(LoadDataBase.Products.Tables["Drinks"], drinks);
+                ExstractingData<SAdditiv>(LoadDataBase.Products.Tables["Additivs"], aditivs);
+            }
         }
 
         /// <summary>

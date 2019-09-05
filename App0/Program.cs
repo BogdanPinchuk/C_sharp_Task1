@@ -42,18 +42,18 @@ namespace App0
             // завантаження БД
             LoadDataBase.UpLoadDataBase(path + file);
 
-#if false
             // якщо БД завантажена успошно запускаємо обробку запитів користувача
             if (LoadDataBase.Succesfull)
             {
+#if true
                 // Запуск інформатора який оновлюватиме БД
                 Checker checker = new Checker(file);
-            } 
 #endif
+                // запуск для тестування
+                new Service(region).Menu();
+            }
             #endregion
 
-            // запуск для тестування
-            new Service(region).Menu();
 
             // delay
             Console.ReadKey(true);

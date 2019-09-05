@@ -31,26 +31,23 @@ namespace App0.Product
         private static readonly List<string> table =
             new List<string>() { "Drinks", "Additivs" };
         /// <summary>
-        /// Автономна база даних продуктів
+        /// Блокує доступ потоків до таблиць
         /// </summary>
-        private static DataSet products;
-        /// <summary>
-        /// Блокує доступ потоків
-        /// </summary>
-        private static readonly object block = new object();
+        public static object Block { get; } = new object();
         /// <summary>
         /// Перевірка успошності завантаження БД
         /// </summary>
         public static bool Succesfull { get; private set; } = false;
+        /// <summary>
+        /// Статус оновлення БД, 
+        /// true - оновлення було, false - оновлення не було
+        /// </summary>
+        public static bool IsUpdateDB { get; set; } = false;
 
         /// <summary>
         /// Таблиці продуктів
         /// </summary>
-        public static DataSet Products
-        {
-            get { lock (block) { return products; } }
-            set { lock (block) { products = value; } }
-        }
+        public static DataSet Products { get; private set; }
         // Примітка. Постійне підключення до файла БД не ефективне, хоча займатиме
         // менше оперативної пам'яті. Але запити і доступ елементів через автономну
         // БД буде суттєво швидше + Нам не потрібно буде переривати роботу програми
@@ -95,18 +92,25 @@ namespace App0.Product
                     // створення адаптера з передачею команди
                     OleDbDataAdapter adapter = new OleDbDataAdapter(comm);
 
-                    // Занесення даних в автономку БД
-                    Products = new DataSet(table[0]);
-                    adapter.Fill(Products, table[0]);
+                    // синхронізуємо доступ до таблиць 
+                    lock (Block)
+                    {
+                        // Занесення даних в автономку БД
+                        Products = new DataSet(table[0]);
+                        adapter.Fill(Products, table[0]);
 
-                    // задання команди
-                    comm.CommandText = $"Select * From {table[1]}";
+                        // задання команди
+                        comm.CommandText = $"Select * From {table[1]}";
 
-                    // передачею команди в адаптер
-                    adapter.SelectCommand = comm;
+                        // передачею команди в адаптер
+                        adapter.SelectCommand = comm;
 
-                    // Занесення даних в автономку БД
-                    adapter.Fill(Products, table[1]);
+                        // Занесення даних в автономку БД
+                        adapter.Fill(Products, table[1]);
+
+                    }
+                    // повідомляємо про оновлення БД
+                    IsUpdateDB = true;
 
                     // установка прапора успошного завантаження БД
                     Succesfull = true;
@@ -115,9 +119,11 @@ namespace App0.Product
             catch (OleDbException ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Скопіюйте файл БД в папку з *.exe файлом, " +
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nСкопіюйте файл БД в папку з *.exe файлом, " +
                     "або якщо файл БД відстуній створіть його за допомогою програми App1 " +
                     "і тоді спопіюйте.");
+                Console.ResetColor();
             }
         }
 
