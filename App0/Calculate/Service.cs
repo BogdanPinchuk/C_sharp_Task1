@@ -669,13 +669,13 @@ namespace App0.Calculate
                     if (typeof(T).Equals(typeof(SDrink)))
                     {
                         products.Add(new SDrink((int)row["ID"], (string)row["Name"],
-                            (float)row["Price"], (float)row["SizeOf"],
+                            Math.Abs((float)row["Price"]), Math.Abs((float)row["SizeOf"]),
                             ((bool)row["TypeOf"]).ConvertToTypeValue()));
                     }
                     else if (typeof(T).Equals(typeof(SAdditiv)))
                     {
                         products.Add(new SAdditiv((int)row["ID"], (string)row["Name"],
-                            (float)row["Price"], (float)row["SizeOf"],
+                            Math.Abs((float)row["Price"]), Math.Abs((float)row["SizeOf"]),
                             ((bool)row["TypeOf"]).ConvertToTypeValue()));
                     }
                     else

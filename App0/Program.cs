@@ -22,6 +22,7 @@ namespace App0
 
             // Заголовок програми
             Console.Title = "Fresh drinks";
+#if false
 
             #region Установка культури
             // В умові вказані $ але можливо 
@@ -54,6 +55,42 @@ namespace App0
             }
             #endregion
 
+#endif
+            Console.Clear();
+
+            // тестування
+            SOrder order = new SOrder();
+            order.Glass = TypeOfGlass.ml110;
+
+            Console.WriteLine(order.IsGlass);
+            Console.WriteLine(order.Capacity);
+            Console.WriteLine(order.Free);
+
+            order.Drinks = new List<IDrink>()
+            {
+                new SDrink(1, "Dr", 5.5, 10, TypeValue.Volume),
+                new SDrink(2, "Ad", 6.6, 11, TypeValue.Weight),
+                new SDrink(3, "Ad", 6.6, 11, TypeValue.Weight),
+                new SDrink(4, "Ad", 6.6, 11, TypeValue.Weight),
+                new SDrink(5, "Ad", 6.6, 11, TypeValue.Weight),
+                new SDrink(6, "Ad", 6.6, 11, TypeValue.Weight),
+
+            };
+
+            Console.WriteLine(order.Drinks?.Count);
+            order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
+
+            order.Clear();
+
+            order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
+            order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
+            order.Drinks.Add(new SDrink(8, "Dr", 5.5, 10, TypeValue.Volume));
+
+            order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
+            order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
+
+            Console.WriteLine(order.Drinks?.Count);
+            Console.WriteLine(order.Additivs?.Count);
 
             // delay
             Console.ReadKey(true);
