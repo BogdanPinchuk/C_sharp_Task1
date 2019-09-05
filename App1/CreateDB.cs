@@ -96,7 +96,7 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
-        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="size">розмів виміру мл/г</param>
         /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="pathFile">Шлях до БД</param>
         public static void AddDrink(int id, string name, double price,
@@ -109,7 +109,7 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
-        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="size">розмів виміру мл/г</param>
         /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="pathFile">Шлях до БД</param>
         public static void AddAdditiv(int id, string name, double price,
@@ -200,7 +200,7 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
-        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="size">розмів виміру мл/г</param>
         /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="pathFile">Шлях до БД</param>
         public static void ChangeDrink(int id, string name, double price,
@@ -221,7 +221,7 @@ namespace App1
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
-        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="size">розмів виміру мл/г</param>
         /// <param name="type">тип виміру вага/об'єм</param>
         /// <param name="pathFile">Шлях до БД</param>
         public static void ChangeAdditiv(int id, string name, double price,

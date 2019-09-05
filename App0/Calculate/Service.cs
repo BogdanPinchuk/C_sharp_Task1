@@ -65,11 +65,11 @@ namespace App0.Calculate
         /// </summary>
         private readonly object block = new object();
         /// <summary>
-        /// Список напоїв
+        /// Список доступних напоїв
         /// </summary>
         private List<IProduct> drinks = new List<IProduct>();
         /// <summary>
-        /// Список добавок
+        /// Список доступних добавок
         /// </summary>
         private List<IProduct> aditivs = new List<IProduct>();
         /// <summary>
@@ -80,20 +80,6 @@ namespace App0.Calculate
         /// Загальне замовлення
         /// </summary>
         private SOrder orderAll;
-
-        /// <summary>
-        /// Вільне місце в стаканчику
-        /// </summary>
-        private double capacity = 0;
-        /// <summary>
-        /// Ємність вибраного стаканчика
-        /// </summary>
-        private double glassC = 0;
-
-        /// <summary>
-        /// Чи вибрано стаканчик
-        /// </summary>
-        private bool glassB = false;
 
         /// <summary>
         /// Конструктор діалогу
@@ -330,7 +316,7 @@ namespace App0.Calculate
                 Console.ForegroundColor = ConsoleColor.Magenta;
 
                 StringBuilder aditiv = new StringBuilder()
-                    .Append("Добавки: (10 мл/10 мг)");
+                    .Append("Добавки: (10 мл/10 г)");
 
                 // Вивід
                 Console.Write(aditiv.ToString());
@@ -438,7 +424,7 @@ namespace App0.Calculate
                 switch (key)
                 {
                     case ConsoleKey.N:  // очистить
-                        //TODO: додать очистку заказа
+                        orderAll.Clear();
                         break;
                     case ConsoleKey.G:  // стаканчик
                         //TODO: додать вибір/зміну стаканчика
@@ -514,10 +500,10 @@ namespace App0.Calculate
         private void SizeGlass()
         {
             // перевірка чи вибрано стаканчик
-            if (glassB)
-            {
-                return;
-            }
+            //if (glassB)
+            //{
+            //    return;
+            //}
 
             // значення наявні для введення відповідно до кількості стаканчиків
             int[] value = Enumerable.Range(1, Enum.GetValues(typeof(TypeOfGlass)).Length).ToArray();
@@ -597,11 +583,11 @@ namespace App0.Calculate
                     if (0 < num && num <= value.Length)
                     {
                         // ємність стаканчика
-                        glassC = value[num - 1];
-                        // вільне місце
-                        capacity = glassC;
-                        // позначаємо, що розмір стакана вибрано
-                        glassB = true;
+                        //glassC = value[num - 1];
+                        //// вільне місце
+                        //capacity = glassC;
+                        //// позначаємо, що розмір стакана вибрано
+                        //glassB = true;
 
                         break;
                     }

@@ -53,7 +53,24 @@ namespace App0.Calculate
         /// <summary>
         /// Вільне місце в стаканчику
         /// </summary>
-        public double Free { get; private set; }
+        public double Free
+        {
+            get
+            {
+                // сума всії продуктів
+                double sum = default(double);
+                // Примітка. Окрім рідини в нас ще є тверді продукти
+                // які вимірюються масою, для точного значення як змінюється 
+                // об'єм рідини при вкидані деяких твердих продуктів необхідно проводити
+                // дослідження, але як для прикладу приймемо, що 10 гр 
+                // сума напою
+                //sum += Drinks.Select(t => t.Size);
+            }
+        }
+        /// <summary>
+        /// Ціна замовлення
+        /// </summary>
+        public double Price { get; private set; }
 
         /// <summary>
         /// Список нопоїв, null - не вибрано
@@ -73,6 +90,13 @@ namespace App0.Calculate
             this.Additivs = null;
             this.IsGlass = false;
         }
+
+        /// <summary>
+        /// Об'єм скаканчика (вільно)/(загальний об'єм)
+        /// </summary>
+        /// <returns></returns>
+        public string Volume()
+            => IsGlass ? $"{Free}/{Capacity}" : string.Empty;
     }
 }
     

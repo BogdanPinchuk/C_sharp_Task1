@@ -38,7 +38,7 @@ namespace App1.Product
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
-        /// <param name="size">розмів виміру мг/мл</param>
+        /// <param name="size">розмів виміру мл/г</param>
         /// <param name="type">тип виміру вага/об'єм</param>
         public SProduct(int id, string name, double price,
             double size, TypeValue type)

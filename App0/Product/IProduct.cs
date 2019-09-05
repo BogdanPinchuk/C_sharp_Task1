@@ -12,7 +12,7 @@ namespace App0.Product
     public enum TypeValue
     {
         /// <summary>
-        /// Вага, мг (міліграм) // true - при конвертації
+        /// Вага, г (грам) // true - при конвертації
         /// </summary>
         Weight,
         /// <summary>
