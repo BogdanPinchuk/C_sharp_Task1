@@ -22,7 +22,7 @@ namespace App0
 
             // Заголовок програми
             Console.Title = "Fresh drinks";
-#if false
+#if true
 
             #region Установка культури
             // В умові вказані $ але можливо 
@@ -56,6 +56,8 @@ namespace App0
             #endregion
 
 #endif
+
+#if false
             Console.Clear();
 
             // тестування
@@ -64,20 +66,21 @@ namespace App0
                 Glass = TypeOfGlass.ml110
             };
 
-            order.IsGlass = false;
-            order.IsGlass = true;
-
             Console.WriteLine(order.IsGlass);
             Console.WriteLine(order.Capacity);
             Console.WriteLine(order.Free);
+            Console.WriteLine();
 
             for (int i = 0; i < 10; i++)
             {
                 order.AddDrink(new SDrink(i, "Ad", 10, 10, TypeValue.Weight));
-                order.AddAdditiv(new SAdditiv(8, "Dr", 10, 10, TypeValue.Volume));
+                order.AddAdditiv(new SAdditiv(8, "Dr", 1, 10, TypeValue.Volume));
+                //Console.WriteLine(order.Volume());
+                Console.WriteLine(order.Price);
             }
 
-            order.Clear();
+            order.Clear(); 
+#endif
 
             // delay
             Console.ReadKey(true);

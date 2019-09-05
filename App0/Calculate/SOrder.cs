@@ -134,7 +134,21 @@ namespace App0.Calculate
         /// <summary>
         /// Ціна замовлення
         /// </summary>
-        public double Price { get; private set; }
+        public double Price
+        {
+            get
+            {
+                // сума всіх продуктів
+                double sum = default;
+
+                // Сума напою
+                sum += GetDrinks().Select(t => t.Price).Sum();
+                // Сума добавок
+                sum += GetAdditivs().Select(t => t.Price).Sum();
+
+                return sum;
+            }
+        }
 
         /// <summary>
         /// Додати напій
@@ -251,6 +265,6 @@ namespace App0.Calculate
         /// </summary>
         /// <returns></returns>
         public string Volume()
-            => IsGlass ? $"{Free:F2}/{Capacity:F2}" : string.Empty;
+            => IsGlass ? $"{Free:F2} / {Capacity:F2}" : string.Empty;
     }
 }

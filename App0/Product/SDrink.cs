@@ -9,7 +9,7 @@ namespace App0.Product
     /// <summary>
     /// Структура напою
     /// </summary>
-    struct SDrink : IDrink, IProduct
+    struct SDrink : IDrink
     {
         /// <summary>
         /// ID - напою

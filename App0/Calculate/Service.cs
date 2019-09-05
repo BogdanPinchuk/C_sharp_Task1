@@ -67,19 +67,19 @@ namespace App0.Calculate
         /// <summary>
         /// Список доступних напоїв
         /// </summary>
-        private List<IProduct> drinks = new List<IProduct>();
+        private List<IDrink> drinks = new List<IDrink>();
         /// <summary>
         /// Список доступних добавок
         /// </summary>
-        private List<IProduct> aditivs = new List<IProduct>();
+        private List<IAdditiv> aditivs = new List<IAdditiv>();
         /// <summary>
         /// Установка культури
         /// </summary>
-        private RegionInfo region;
+        private readonly RegionInfo region;
         /// <summary>
         /// Загальне замовлення
         /// </summary>
-        private SOrder orderAll;
+        private SOrder data;
 
         /// <summary>
         /// Конструктор діалогу
@@ -99,9 +99,9 @@ namespace App0.Calculate
             // підписи на події
             ChangeSize += Menu;         // оновлення меню
             ChangeDB += DownloadData;   // оновлення БД
+
             // запуск відслідковування змін
             new Thread(CheckerChange).Start();
-
         }
 
         /// <summary>
@@ -123,8 +123,6 @@ namespace App0.Calculate
                 new Thread(Drink),
                 // добавки
                 new Thread(Aditiv),
-                // замовлення
-                new Thread(Order)
             };
 
             // запуск виконання
@@ -215,7 +213,7 @@ namespace App0.Calculate
                 }
 
                 // скидання налаштувань
-                //Console.ResetColor();
+                Console.ResetColor();
             }
         }
 
@@ -354,17 +352,72 @@ namespace App0.Calculate
                 // установка курсора
                 Console.SetCursorPosition(2, 11 + Math.Max(drinks.Count, aditivs.Count));
 
-                // зміна кольору
-                Console.ForegroundColor = ConsoleColor.Red;
+                //TODO: удалить тестові дані
+                data.Glass = TypeOfGlass.ml110;
+                data.AddDrink(drinks[1]);
+                data.AddAdditiv(aditivs[1]);
+                data.AddAdditiv(aditivs[0]);
+                data.AddAdditiv(aditivs[0]);
+                data.AddAdditiv(aditivs[1]);
+                data.AddAdditiv(aditivs[3]);
 
-                StringBuilder order = new StringBuilder()
-                    .Append("Ваш заказ: ");
+                // якщо стаканчик вибрано то можна відображати замовлення
+                if (data.IsGlass)
+                {
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    // Вивід
+                    Console.Write("Ваш заказ: ");
 
-                // Вивід
-                Console.Write(order.ToString());
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    // Вивід
+                    Console.Write($"G - {Enum.GetValues(typeof(TypeOfGlass)).Cast<TypeOfGlass>().ToList().IndexOf(data.Glass) + 1};");
+
+                    // Перевірка чи вибнано напій
+                    if (data.GetDrinks().Count > 0)
+                    {
+                        // зміна кольору
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        // Вивід
+                        Console.Write($" D - {data.GetDrinks()[0].ID}x{data.GetDrinks().Count};");
+                    }
+
+                    // Перевірка чи вибнано добавки
+                    if (data.GetAdditivs().Count > 0)
+                    {
+                        // зміна кольору
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+
+                        // Вивід
+                        var s = new StringBuilder($" A -");
+
+                        foreach (var i in aditivs)
+                        {
+                            if (data.GetAdditivs().Contains(i))
+                            {
+                                s.Append($" {i.ID}x{data.GetAdditivs().Where(t => t.ID == i.ID).Select(t => t).ToList().Count},");
+                            }
+                        }
+
+                        // Вивід
+                        Console.Write(s.ToString().TrimEnd(',') + ";");
+                    }
+
+                    // Можна зробити умову, що можливість оплати відбувається лише при умові вибору напою
+                    if (data.GetDrinks().Count > 0)
+                    {
+                        // установка курсора
+                        Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 11 + Math.Max(drinks.Count, aditivs.Count));
+
+                        // зміна кольору
+                        Console.ForegroundColor = ConsoleColor.White;
+                        // Вивід
+                        Console.Write("P - оптала;");
+                    }
+                }
                 #endregion
 
-                #region Ціна
                 // установка курсора
                 Console.SetCursorPosition(2, 13 + Math.Max(drinks.Count, aditivs.Count));
                 // очистка
@@ -373,29 +426,37 @@ namespace App0.Calculate
                 // установка курсора
                 Console.SetCursorPosition(2, 13 + Math.Max(drinks.Count, aditivs.Count));
 
-                // зміна кольору
-                Console.ForegroundColor = ConsoleColor.Red;
+                #region Ціна
+                if (data.IsGlass)
+                {
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    // Вивід
+                    Console.Write("Стоимость: ");
 
-                order = new StringBuilder()
-                    .Append("Стоимость: ");
-
-                // Вивід
-                Console.Write(order.ToString());
-                // TODO: додати лог-файл покупок
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    // Вивід
+                    Console.Write($"{data.Price.ToString("C2", new CultureInfo(region.Name))}");
+                }
                 #endregion
 
                 #region Об'єм
-                // установка курсора
-                Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 13 + Math.Max(drinks.Count, aditivs.Count));
+                if (data.IsGlass)
+                {
+                    // установка курсора
+                    Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 13 + Math.Max(drinks.Count, aditivs.Count));
 
-                // зміна кольору
-                Console.ForegroundColor = ConsoleColor.Red;
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    // Вивід
+                    Console.Write("Объем: ");
 
-                order = new StringBuilder()
-                    .Append("Объем: ");
-
-                // Вивід
-                Console.Write(order.ToString());
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    // Вивід
+                    Console.Write($"{data.Volume()}");
+                }
                 #endregion
 
                 // скидання налаштувань
@@ -414,6 +475,9 @@ namespace App0.Calculate
             // Обробка натискань
             while (true)
             {
+                // Результат замовлення
+                Order();
+
                 // Головне меню вибору
                 MenuChange();
 
@@ -424,7 +488,7 @@ namespace App0.Calculate
                 switch (key)
                 {
                     case ConsoleKey.N:  // очистить
-                        orderAll.Clear();
+                        data.Clear();
                         break;
                     case ConsoleKey.G:  // стаканчик
                         //TODO: додать вибір/зміну стаканчика
@@ -473,10 +537,7 @@ namespace App0.Calculate
 
                 // скидання налаштувань
                 Console.ResetColor();
-
                 #endregion
-
-
             }
         }
 
@@ -643,8 +704,8 @@ namespace App0.Calculate
             lock (LoadDataBase.Block)
             {
                 // завантаження даних з таблиць
-                ExstractingData<SDrink>(LoadDataBase.Products.Tables["Drinks"], drinks);
-                ExstractingData<SAdditiv>(LoadDataBase.Products.Tables["Additivs"], aditivs);
+                ExstractingData(LoadDataBase.Products.Tables["Drinks"], drinks);
+                ExstractingData(LoadDataBase.Products.Tables["Additivs"], aditivs);
             }
         }
 
@@ -654,34 +715,40 @@ namespace App0.Calculate
         /// <typeparam name="T">Тип вихідних даних</typeparam>
         /// <param name="table">Таблиця з даними</param>
         /// <returns></returns>
-        private void ExstractingData<T>(DataTable table, List<IProduct> products)
+        private void ExstractingData<T>(DataTable table, List<T> products)
             where T : IProduct
         {
             // очищення списку
             products.Clear();
-            
+
             try
             {
+                // тимчасова змінна
+                IProduct temp;
+
                 // перебираємо всі рядки в таблиці
                 foreach (DataRow row in table.Rows)
                 {
                     // заносимо дані в колекції
-                    if (typeof(T).Equals(typeof(SDrink)))
+                    if (typeof(T).Equals(typeof(IDrink)))
                     {
-                        products.Add(new SDrink((int)row["ID"], (string)row["Name"],
+                        temp = new SDrink((int)row["ID"], (string)row["Name"],
                             Math.Abs((float)row["Price"]), Math.Abs((float)row["SizeOf"]),
-                            ((bool)row["TypeOf"]).ConvertToTypeValue()));
+                            ((bool)row["TypeOf"]).ConvertToTypeValue());
+
                     }
-                    else if (typeof(T).Equals(typeof(SAdditiv)))
+                    else if (typeof(T).Equals(typeof(IAdditiv)))
                     {
-                        products.Add(new SAdditiv((int)row["ID"], (string)row["Name"],
+                        temp = new SAdditiv((int)row["ID"], (string)row["Name"],
                             Math.Abs((float)row["Price"]), Math.Abs((float)row["SizeOf"]),
-                            ((bool)row["TypeOf"]).ConvertToTypeValue()));
+                            ((bool)row["TypeOf"]).ConvertToTypeValue());
                     }
                     else
                     {
                         throw new Exception("This type is not valid");
                     }
+
+                    products.Add((T)temp);
                 }
             }
             catch (ArgumentException ex)
