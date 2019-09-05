@@ -68,8 +68,8 @@ namespace App0
 
             order.Drinks = new List<IDrink>()
             {
-                new SDrink(1, "Dr", 5.5, 10, TypeValue.Volume),
                 new SDrink(2, "Ad", 6.6, 11, TypeValue.Weight),
+                new SDrink(1, "Dr", 5.5, 10, TypeValue.Volume),
                 new SDrink(3, "Ad", 6.6, 11, TypeValue.Weight),
                 new SDrink(4, "Ad", 6.6, 11, TypeValue.Weight),
                 new SDrink(5, "Ad", 6.6, 11, TypeValue.Weight),
@@ -80,11 +80,13 @@ namespace App0
             Console.WriteLine(order.Drinks?.Count);
             order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
 
-            order.Clear();
-
-            order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
-            order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
-            order.Drinks.Add(new SDrink(8, "Dr", 5.5, 10, TypeValue.Volume));
+            //order.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
+                order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
+                order.Drinks.Add(new SDrink(8, "Dr", 5.5, 10, TypeValue.Volume));
+            }
 
             order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
             order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));

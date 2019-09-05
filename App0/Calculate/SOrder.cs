@@ -149,46 +149,7 @@ namespace App0.Calculate
                     drinks = new List<IDrink>();
                 }
 
-                // так як можна отримати доступ через Add() і поламати логіку
-                // необхідно зробити чистку і тут
-                if (drinks?.Count > 1)
-                {
-                    // копіюємо в локальну область для обробки
-                    var temp = drinks;
-                    // робимо очищення по першому напою
-                    temp = temp.Where(t => t.Name == temp[0].Name)
-                        .Select(t => t)
-                        .ToList();
-
-                    drinks = temp;
-                }
-
                 return drinks;
-            }
-            set
-            {
-                if (!IsGlass || value?.Count == 0)
-                {
-                    return;
-                }
-
-                // необхідно недопустити змішування напоїв
-
-                // присвоюємо дані
-                drinks = value;
-                // копіюємо в локальну область для обробки
-                var temp = drinks;
-                // робимо очищення по першому напою
-                temp = temp.Where(t => t.Name == temp[0].Name)
-                    .Select(t => t)
-                    .ToList();
-
-                drinks = temp;
-
-                if (drinks == null)
-                {
-                    drinks = new List<IDrink>();
-                }
             }
         }
         /// <summary>
@@ -220,6 +181,90 @@ namespace App0.Calculate
                     additivs = new List<IAdditiv>();
                 }
             }
+        }
+
+        /// <summary>
+        /// Додати напій
+        /// </summary>
+        /// <param name="drink">Напій</param>
+        public bool AddDrink(IDrink drink)
+        {
+            // якщо стаканчика немає, додавати нічого не можна
+            if (!IsGlass)
+            {
+                return false;
+            }
+
+            // необхідно не допустити переповнення стаканчика
+            // розрахунок об'єму продукту який пробують додати
+            double size = (drink.TypeOfValue == TypeValue.Volume) ? drink.Size : drink.Size * 0.5;
+
+            // якщо перший раз то ініціалізуємо
+            if (drinks == null)
+            {
+                drinks = new List<IDrink>();
+                // якщо є вільне місце то додаємо продукт
+                if (Free >= size)
+                {
+                    drinks.Add(drink);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            // необхідно недопустити змішування напоїв
+            if (drinks[0].Name == drink.Name && Free >= size)
+            {
+                drinks.Add(drink);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Додати добавку
+        /// </summary>
+        /// <param name="additiv">Добавка</param>
+        public bool AddAdditiv(IAdditiv additiv)
+        {
+            // якщо стаканчика немає, додавати нічого не можна
+            if (!IsGlass)
+            {
+                return false;
+            }
+
+            // необхідно не допустити переповнення стаканчика
+            // розрахунок об'єму продукту який пробують додати
+            double size = (additiv.TypeOfValue == TypeValue.Volume) ? additiv.Size : additiv.Size * 0.5;
+
+            // якщо перший раз то ініціалізуємо
+            if (additivs == null)
+            {
+                additivs = new List<IAdditiv>();
+                // якщо є вільне місце то додаємо продукт
+                if (Free >= size)
+                {
+                    additivs.Add(additiv);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            // необхідно недопустити переповнення в наступних випадках
+            if (Free >= size)
+            {
+                additivs.Add(additiv);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
