@@ -353,13 +353,13 @@ namespace App0.Calculate
                 Console.SetCursorPosition(2, 11 + Math.Max(drinks.Count, aditivs.Count));
 
                 //TODO: удалить тестові дані
-                data.Glass = TypeOfGlass.ml110;
+                /*data.Glass = TypeOfGlass.ml110;
                 data.AddDrink(drinks[1]);
                 data.AddAdditiv(aditivs[1]);
                 data.AddAdditiv(aditivs[0]);
                 data.AddAdditiv(aditivs[0]);
                 data.AddAdditiv(aditivs[1]);
-                data.AddAdditiv(aditivs[3]);
+                data.AddAdditiv(aditivs[3]);*/
 
                 // якщо стаканчик вибрано то можна відображати замовлення
                 if (data.IsGlass)
@@ -491,23 +491,149 @@ namespace App0.Calculate
                         data.Clear();
                         break;
                     case ConsoleKey.G:  // стаканчик
+                        SizeGlass();
+                        break;
                         //TODO: додать вибір/зміну стаканчика
-                        break;
                     case ConsoleKey.D:  // напиток
+                        if (data.IsGlass)
+                        {
+
+                        }
+                        break;
                         //TODO: додать вибір напою
-                        break;
                     case ConsoleKey.A:  // добавка
-                        //TODO: додать вибір добавок
+                        if (data.IsGlass)
+                        {
+
+                        }
                         break;
+                        //TODO: додать вибір добавок
                     case ConsoleKey.P:  // оплата
-                        //TODO: додать оплату (запис в лог файл і очистка)
-                        goto case ConsoleKey.N; // перехід на очистку
+                        if (data.GetDrinks().Count > 0)
+                        {
+                            Pay();
+                            goto case ConsoleKey.N; // перехід на очистку
+                        }
+                        break;
+                    //TODO: додать оплату (запис в лог файл і очистка)
                     case ConsoleKey.Q:  // виход
                         Environment.Exit(0);
                         break;
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Вибір розмірів стаканчика
+        /// </summary>
+        /// <returns></returns>
+        private void SizeGlass()
+        {
+            // значення наявні для введення відповідно до кількості стаканчиків
+            int[] value = Enumerable.Range(1, Enum.GetValues(typeof(TypeOfGlass)).Length).ToArray();
+
+            // перевірка введеного значення
+            do
+            {
+                // установка курсора
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                // очистка
+                Console.Write(new string(' ', Console.WindowWidth - 4));
+                // установка курсора
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                // зміна кольору
+                Console.ForegroundColor = ConsoleColor.Green;
+                
+                // Вивід
+                Console.Write("Введите размер стаканчика: ");
+
+                // скидання налаштувань
+                Console.ResetColor();
+
+                // введення клавіши
+                string key = Console.ReadLine();
+
+                // при натисканні виходу 
+                if (key.ToLower() == ConsoleKey.Q.ToString().ToLower())
+                {
+                    #region Обробка виходу
+                    do
+                    {
+
+                        // установка курсора
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                // очистка
+                Console.Write(new string(' ', Console.WindowWidth - 4));
+
+                // установка курсора
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                        // зміна кольору
+                        Console.ForegroundColor = ConsoleColor.Red;
+
+                        // Вивід
+                        Console.Write("Выйти с програмы [y/n]: ");
+
+                        // введення клавіши
+                        key = Console.ReadLine();
+
+                        if (key.ToLower() == ConsoleKey.Y.ToString().ToLower())
+                        {
+                            Environment.Exit(0);
+                        }
+                        else if (key.ToLower() == ConsoleKey.N.ToString().ToLower())
+                        {
+                            break;
+                        }
+
+                        // скидання налаштувань
+                        Console.ResetColor();
+                    } while (true);
+
+                    // повторення запиту
+                    continue;
+                    #endregion
+                }
+
+                // введене число
+                int num = 0;
+                // при натисканні однієї із доступних клавіш
+                if (int.TryParse(key, out num))
+                {
+                    if (0 < num && num <= value.Length)
+                    {
+                        break;
+                    }
+                }
+
+            } while (true);
+        }
+
+        /// <summary>
+        /// Оплата замовлення
+        /// </summary>
+        private void Pay()
+        {
+            lock (block)
+            {
+                // установка курсора
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                // очистка
+                Console.Write(new string(' ', Console.WindowWidth - 4));
+
+                // установка курсора
+                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                // Вивід
+                Print("Спасибо за оплату. Нажмите клавишу для продолжения...", ConsoleColor.Green);
+            }
+
+            // очікування натискання клавіші
+            Console.ReadKey(true);
         }
 
         /// <summary>
@@ -552,109 +678,6 @@ namespace App0.Calculate
             Console.ForegroundColor = color;
             // Вивід
             Console.Write(s);
-        }
-
-        /// <summary>
-        /// Ввід розмірів стаканчика
-        /// </summary>
-        /// <returns></returns>
-        private void SizeGlass()
-        {
-            // перевірка чи вибрано стаканчик
-            //if (glassB)
-            //{
-            //    return;
-            //}
-
-            // значення наявні для введення відповідно до кількості стаканчиків
-            int[] value = Enumerable.Range(1, Enum.GetValues(typeof(TypeOfGlass)).Length).ToArray();
-
-            // перевірка введеного значення
-            do
-            {
-                // установка курсора
-                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
-
-                // очистка
-                Console.Write(new string(' ', Console.WindowWidth - 4));
-
-                // установка курсора
-                Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
-
-                // зміна кольору
-                Console.ForegroundColor = ConsoleColor.White;
-
-                // Вивід
-                Console.Write("Введите размер стаканчика: ");
-
-                // скидання налаштувань
-                Console.ResetColor();
-
-                // введення клавіши
-                string key = Console.ReadLine();
-
-                // при натисканні виходу 
-                if (key.ToLower() == ConsoleKey.Q.ToString().ToLower())
-                {
-                    #region Обробка виходу
-                    do
-                    {
-
-                        // установка курсора
-                        Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
-
-                        // очистка
-                        Console.Write(new string(' ', Console.WindowWidth - 4));
-
-                        // установка курсора
-                        Console.SetCursorPosition(2, 15 + Math.Max(drinks.Count, aditivs.Count));
-
-                        // зміна кольору
-                        Console.ForegroundColor = ConsoleColor.Red;
-
-                        // Вивід
-                        Console.Write("Выйти с програмы [y/n]: ");
-
-                        // введення клавіши
-                        key = Console.ReadLine();
-
-                        if (key.ToLower() == ConsoleKey.Y.ToString().ToLower())
-                        {
-                            Environment.Exit(0);
-                        }
-                        else if (key.ToLower() == ConsoleKey.N.ToString().ToLower())
-                        {
-                            break;
-                        }
-
-                        // скидання налаштувань
-                        Console.ResetColor();
-                    } while (true);
-
-                    // повторення запиту
-                    continue;
-                    #endregion
-                }
-
-                // введене число
-                int num = 0;
-                // при натисканні однієї із доступних клавіш
-                if (int.TryParse(key, out num))
-                {
-                    if (0 < num && num <= value.Length)
-                    {
-                        // ємність стаканчика
-                        //glassC = value[num - 1];
-                        //// вільне місце
-                        //capacity = glassC;
-                        //// позначаємо, що розмір стакана вибрано
-                        //glassB = true;
-
-                        break;
-                    }
-                }
-
-            } while (true);
         }
 
         /// <summary>
