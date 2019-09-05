@@ -59,40 +59,25 @@ namespace App0
             Console.Clear();
 
             // тестування
-            SOrder order = new SOrder();
-            order.Glass = TypeOfGlass.ml110;
+            SOrder order = new SOrder
+            {
+                Glass = TypeOfGlass.ml110
+            };
+
+            order.IsGlass = false;
+            order.IsGlass = true;
 
             Console.WriteLine(order.IsGlass);
             Console.WriteLine(order.Capacity);
             Console.WriteLine(order.Free);
 
-            order.Drinks = new List<IDrink>()
+            for (int i = 0; i < 10; i++)
             {
-                new SDrink(2, "Ad", 6.6, 11, TypeValue.Weight),
-                new SDrink(1, "Dr", 5.5, 10, TypeValue.Volume),
-                new SDrink(3, "Ad", 6.6, 11, TypeValue.Weight),
-                new SDrink(4, "Ad", 6.6, 11, TypeValue.Weight),
-                new SDrink(5, "Ad", 6.6, 11, TypeValue.Weight),
-                new SDrink(6, "Ad", 6.6, 11, TypeValue.Weight),
-
-            };
-
-            Console.WriteLine(order.Drinks?.Count);
-            order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
-
-            //order.Clear();
-            for (int i = 0; i < 5; i++)
-            {
-                order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
-                order.Drinks.Add(new SDrink(7, "Ad", 5.5, 10, TypeValue.Volume));
-                order.Drinks.Add(new SDrink(8, "Dr", 5.5, 10, TypeValue.Volume));
+                order.AddDrink(new SDrink(i, "Ad", 10, 10, TypeValue.Weight));
+                order.AddAdditiv(new SAdditiv(8, "Dr", 10, 10, TypeValue.Volume));
             }
 
-            order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
-            order.Additivs.Add(new SAdditiv(8, "Dr", 5.5, 10, TypeValue.Volume));
-
-            Console.WriteLine(order.Drinks?.Count);
-            Console.WriteLine(order.Additivs?.Count);
+            order.Clear();
 
             // delay
             Console.ReadKey(true);

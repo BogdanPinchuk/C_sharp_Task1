@@ -90,13 +90,11 @@ namespace App0.Product
                     comm.CommandText = $"Select * From {table[0]}";
 
                     // створення адаптера з передачею команди
-                    OleDbDataAdapter adapter = new OleDbDataAdapter(comm);
-
-                    // синхронізуємо доступ до таблиць 
-                    lock (Block)
+                    using (OleDbDataAdapter adapter = new OleDbDataAdapter(comm))
                     {
-                        //try
-                        //{
+                        // синхронізуємо доступ до таблиць 
+                        lock (Block)
+                        {
                             // Занесення даних в автономку БД
                             Products = new DataSet(table[0]);
                             adapter.Fill(Products, table[0]);
@@ -109,14 +107,9 @@ namespace App0.Product
 
                             // Занесення даних в автономку БД
                             adapter.Fill(Products, table[1]);
-                        //}
-                        //catch (Exception)
-                        //{
-
-                        //    throw;
-                        //}
-
+                        }
                     }
+
                     // повідомляємо про оновлення БД
                     IsUpdateDB = true;
 

@@ -92,17 +92,16 @@ namespace App0.Calculate
                     return 0;
                 }
 
-                // TODO: змінити на наявність колекцій
-                // сума всії продуктів
-                double sum = default(double);
-                // Примітка. Окрім рідини в нас ще є тверді продукти
-                // які вимірюються масою, для точного значення як змінюється 
+                // сума всіх продуктів
+                double sum = default;
+                //Примітка.Окрім рідини в нас ще є тверді продукти
+                // які вимірюються масою, для точного значення як змінюється
                 // об'єм рідини при вкидані деяких твердих продуктів необхідно проводити
                 // дослідження, але як для прикладу приймемо, що 10 гр при попаданні
                 // в рідину перетворюється в 5 мл, тобто 1 г = 0,5 мл
 
                 #region Сума напою
-                foreach (var i in Drinks)
+                foreach (var i in GetDrinks())
                 {
                     if (i.TypeOfValue == TypeValue.Volume)
                     {
@@ -116,7 +115,7 @@ namespace App0.Calculate
                 #endregion
 
                 #region Сума добавок
-                foreach (var i in Additivs)
+                foreach (var i in GetAdditivs())
                 {
                     if (i.TypeOfValue == TypeValue.Volume)
                     {
@@ -138,52 +137,6 @@ namespace App0.Calculate
         public double Price { get; private set; }
 
         /// <summary>
-        /// Список нопоїв, null - не вибрано
-        /// </summary>
-        public List<IDrink> Drinks
-        {
-            get
-            {
-                if (drinks == null || !IsGlass)
-                {
-                    drinks = new List<IDrink>();
-                }
-
-                return drinks;
-            }
-        }
-        /// <summary>
-        /// Список добавок, null - не вибрано
-        /// </summary>
-        public List<IAdditiv> Additivs
-        {
-            get
-            {
-                if (additivs == null || !IsGlass)
-                {
-                    additivs = new List<IAdditiv>();
-                }
-
-                return additivs;
-            }
-            set
-            {
-                if (!IsGlass || value?.Count == 0)
-                {
-                    return;
-                }
-
-                // присвоюємо дані
-                additivs = value;
-
-                if (additivs == null)
-                {
-                    additivs = new List<IAdditiv>();
-                }
-            }
-        }
-
-        /// <summary>
         /// Додати напій
         /// </summary>
         /// <param name="drink">Напій</param>
@@ -200,10 +153,11 @@ namespace App0.Calculate
             double size = (drink.TypeOfValue == TypeValue.Volume) ? drink.Size : drink.Size * 0.5;
 
             // якщо перший раз то ініціалізуємо
-            if (drinks == null)
+            drinks = drinks ?? new List<IDrink>();
+
+            // якщо є вільне місце то додаємо продукт
+            if (drinks.Count == 0)
             {
-                drinks = new List<IDrink>();
-                // якщо є вільне місце то додаємо продукт
                 if (Free >= size)
                 {
                     drinks.Add(drink);
@@ -226,6 +180,13 @@ namespace App0.Calculate
         }
 
         /// <summary>
+        /// Отримати колекцію напоїв
+        /// </summary>
+        /// <returns></returns>
+        public List<IDrink> GetDrinks()
+            => drinks = drinks ?? new List<IDrink>();
+
+        /// <summary>
         /// Додати добавку
         /// </summary>
         /// <param name="additiv">Добавка</param>
@@ -242,10 +203,11 @@ namespace App0.Calculate
             double size = (additiv.TypeOfValue == TypeValue.Volume) ? additiv.Size : additiv.Size * 0.5;
 
             // якщо перший раз то ініціалізуємо
-            if (additivs == null)
+            additivs = additivs ?? new List<IAdditiv>();
+
+            // якщо є вільне місце то додаємо продукт
+            if (additivs.Count == 0)
             {
-                additivs = new List<IAdditiv>();
-                // якщо є вільне місце то додаємо продукт
                 if (Free >= size)
                 {
                     additivs.Add(additiv);
@@ -268,12 +230,19 @@ namespace App0.Calculate
         }
 
         /// <summary>
+        /// Отримати колекцію добавок
+        /// </summary>
+        /// <returns></returns>
+        public List<IAdditiv> GetAdditivs()
+            => additivs = additivs ?? new List<IAdditiv>();
+
+        /// <summary>
         /// Очищення замовлення
         /// </summary>
         public void Clear()
         {
-            this.Drinks?.Clear();
-            this.Additivs?.Clear();
+            this.drinks?.Clear();
+            this.additivs?.Clear();
             this.isGlass = false;
         }
 

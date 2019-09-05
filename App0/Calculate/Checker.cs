@@ -22,7 +22,7 @@ namespace App0.Calculate
         /// <summary>
         /// Наглядач
         /// </summary>
-        private FileSystemWatcher watcher = new FileSystemWatcher();
+        private readonly FileSystemWatcher watcher = new FileSystemWatcher();
 
         /// <summary>
         /// Шлях відслідковування каталога
