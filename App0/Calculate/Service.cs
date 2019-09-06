@@ -80,6 +80,10 @@ namespace App0.Calculate
         /// Загальне замовлення
         /// </summary>
         private SOrder data;
+        /// <summary>
+        /// Код доступу до відповідного меню, щоб воно автоматично не виходило в головне
+        /// </summary>
+        private int codeMenu = 0;
 
         /// <summary>
         /// Конструктор діалогу
@@ -340,6 +344,12 @@ namespace App0.Calculate
         /// </summary>
         private void Order()
         {
+            // Примітка. В даному випадку, розташування "чека/замовлення" з вказаними
+            // даними зручне/сприятливе. Якщо ж буде необхідно розширювати асортимент 
+            // продуктів/замовлення, то необхідно або враховувати величину рядка
+            // замовлення і нижню частину зміщувати, або ж перенести цей пункт після
+            // блоку упралінням замовлення.
+
             // Блокуємо доступ іншим потокам
             lock (block)
             {
@@ -401,9 +411,11 @@ namespace App0.Calculate
                         }
 
                         // Вивід
-                        Console.Write(s.ToString().TrimEnd(',') + ";");
+                        Console.Write(s.ToString().TrimEnd(',') + "; ");
                     }
 
+                    #region For MS Visual Studio 2019 and Windows 10
+#if false
                     // Можна зробити умову, що можливість оплати відбувається лише при умові вибору напою
                     if (data.GetDrinks().Count > 0)
                     {
@@ -414,7 +426,9 @@ namespace App0.Calculate
                         Console.ForegroundColor = ConsoleColor.White;
                         // Вивід
                         Console.Write("P - оптала;");
-                    }
+                    } 
+#endif 
+                    #endregion
                 }
                 #endregion
 
@@ -437,7 +451,24 @@ namespace App0.Calculate
                     // зміна кольору
                     Console.ForegroundColor = ConsoleColor.Green;
                     // Вивід
-                    Console.Write($"{data.Price.ToString("C2", new CultureInfo(region.Name))}");
+                    Console.Write($"{data.Price.ToString("C2", new CultureInfo(region.Name))}; ");
+
+                    #region For MS Visual Studio 2015 and Windows 7
+#if true
+                    // Можна зробити умову, що можливість оплати відбувається лише при умові вибору напою
+                    if (data.GetDrinks().Count > 0)
+                    {
+                        // установка курсора (початку це було добре відображено на MS visual srudio v. 2019)
+                        // але на v. 2015 - затираються дані на консолі
+                        //Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 11 + Math.Max(drinks.Count, aditivs.Count));
+
+                        // зміна кольору
+                        Console.ForegroundColor = ConsoleColor.White;
+                        // Вивід
+                        Console.Write("P - оптала;");
+                    }
+#endif
+                    #endregion
                 }
                 #endregion
 
@@ -480,9 +511,15 @@ namespace App0.Calculate
 
                 // Головне меню вибору
                 MenuChange();
-
+                
                 // введення клавіши
-                ConsoleKey key = Console.ReadKey(true).Key;
+                ConsoleKey? key = null;
+                key = Console.ReadKey(true).Key;
+                // Примітка. При виході із методів, якимось відбувається зебреження
+                // останньої нажатої клавіши, а тому, якщо була нажата клавіша виходу
+                // то воно підставляє її сюди і виходить з програми повністю,
+                // щоб цього не було, необхідно очишувати змінну під клавішу через 
+                // Nullable змінні
 
                 // дія згідно вибору
                 switch (key)
@@ -493,21 +530,21 @@ namespace App0.Calculate
                     case ConsoleKey.G:  // стаканчик
                         SizeGlass();
                         break;
-                        //TODO: додать вибір/зміну стаканчика
+                    //TODO: додать вибір/зміну стаканчика
                     case ConsoleKey.D:  // напиток
                         if (data.IsGlass)
                         {
 
                         }
                         break;
-                        //TODO: додать вибір напою
+                    //TODO: додать вибір напою
                     case ConsoleKey.A:  // добавка
                         if (data.IsGlass)
                         {
 
                         }
                         break;
-                        //TODO: додать вибір добавок
+                    //TODO: додать вибір добавок
                     case ConsoleKey.P:  // оплата
                         if (data.GetDrinks().Count > 0)
                         {
@@ -519,7 +556,8 @@ namespace App0.Calculate
                     case ConsoleKey.Q:  // виход
                         Environment.Exit(0);
                         break;
-
+                    default:
+                        break;
                 }
             }
         }
@@ -530,86 +568,59 @@ namespace App0.Calculate
         /// <returns></returns>
         private void SizeGlass()
         {
-            // значення наявні для введення відповідно до кількості стаканчиків
-            int[] value = Enumerable.Range(1, Enum.GetValues(typeof(TypeOfGlass)).Length).ToArray();
+            // набір стаканчиків
+            TypeOfGlass[] value = Enum.GetValues(typeof(TypeOfGlass)).Cast<TypeOfGlass>().ToArray();
 
-            // перевірка введеного значення
-            do
+            // Блокуємо доступ іншим потокам
+            lock (block)
             {
-                // установка курсора
-                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
-                // очистка
-                Console.Write(new string(' ', Console.WindowWidth - 4));
-                // установка курсора
-                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
-
-                // зміна кольору
-                Console.ForegroundColor = ConsoleColor.Green;
-                
-                // Вивід
-                Console.Write("Введите размер стаканчика: ");
-
-                // скидання налаштувань
-                Console.ResetColor();
-
-                // введення клавіши
-                string key = Console.ReadLine();
-
-                // при натисканні виходу 
-                if (key.ToLower() == ConsoleKey.Q.ToString().ToLower())
+                // перевірка введеного значення
+                do
                 {
-                    #region Обробка виходу
-                    do
+                    // установка курсора
+                    Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                    // очистка
+                    Console.Write(new string(' ', Console.WindowWidth - 4));
+                    // установка курсора
+                    Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    // Вивід
+                    Console.Write("Выберите размер стаканчика: ");
+
+                    // скидання налаштувань
+                    Console.ResetColor();
+
+                    // введення
+                    string key = Console.ReadLine();
+
+                    // Примітка. Згідно даної умови і даних, можна було б
+                    // написати обробку по натисканні однієї клавіши, але
+                    // програма розраховується на умову коли в БД буде 
+                    // більше 10 одиниць вибору продуктів
+
+                    // при натисканні виходу 
+                    if ((key.ToLower() == ConsoleKey.Q.ToString().ToLower()))
                     {
-
-                        // установка курсора
-                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
-
-                // очистка
-                Console.Write(new string(' ', Console.WindowWidth - 4));
-
-                // установка курсора
-                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
-
-                        // зміна кольору
-                        Console.ForegroundColor = ConsoleColor.Red;
-
-                        // Вивід
-                        Console.Write("Выйти с програмы [y/n]: ");
-
-                        // введення клавіши
-                        key = Console.ReadLine();
-
-                        if (key.ToLower() == ConsoleKey.Y.ToString().ToLower())
-                        {
-                            Environment.Exit(0);
-                        }
-                        else if (key.ToLower() == ConsoleKey.N.ToString().ToLower())
-                        {
-                            break;
-                        }
-
-                        // скидання налаштувань
-                        Console.ResetColor();
-                    } while (true);
-
-                    // повторення запиту
-                    continue;
-                    #endregion
-                }
-
-                // введене число
-                int num = 0;
-                // при натисканні однієї із доступних клавіш
-                if (int.TryParse(key, out num))
-                {
-                    if (0 < num && num <= value.Length)
-                    {
-                        break;
+                        return;
                     }
-                }
 
-            } while (true);
+                    // спроба перевести в числове значення, а next сигналізує вірність вводу
+                    int position = 0;
+                    bool next = int.TryParse(key, out position);
+
+                    // аналіз чи можна продовжувати, якщо так то записуємо вибір користувача
+                    // також аналізуємо чи введені дані у допустимому діапазоні
+                    if (next && 0 < position && position <= value.Length)
+                    {
+                        data.Glass = value[position - 1];
+                        return;
+                    }
+
+                } while (true);
+            }
         }
 
         /// <summary>
