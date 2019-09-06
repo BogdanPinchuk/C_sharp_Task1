@@ -512,46 +512,66 @@ namespace App0.Calculate
                 switch (key)
                 {
                     case ConsoleKey.N:  // очистить
-                        key = null;
                         if (data.IsGlass)
                         {
                             data.Clear();
                         }
                         break;
                     case ConsoleKey.G:  // стаканчик
-                        key = null;
                         SizeGlass();
                         break;
                     case ConsoleKey.D:  // напиток
-                        key = null;
                         if (data.IsGlass)
                         {
                             Pour();
                         }
                         break;
-                    //TODO: додать вибір напою
                     case ConsoleKey.A:  // добавка
-                        key = null;
                         if (data.IsGlass)
                         {
 
                         }
                         break;
-                    //TODO: додать вибір добавок
                     case ConsoleKey.P:  // оплата
-                        key = null;
                         if (data.GetDrinks().Count > 0)
                         {
                             Pay();
-                            
                         }
                         break;
-                    //TODO: додать оплату (запис в лог файл і очистка)
                     case ConsoleKey.Q:  // виход
-                        key = null;
                         Environment.Exit(0);
                         break;
+                        //TODO: додать оплату (запис в лог файл і очистка)
                 }
+
+                #region Тестування глюків зчитування клавіш в косолі
+#if false
+                if (key0 == ConsoleKey.N && data.IsGlass)// очистить
+                {
+                    data.Clear();
+                }
+                else if (key0 == ConsoleKey.G) // стаканчик
+                {
+                    SizeGlass();
+                }
+                else if (key0 == ConsoleKey.D && data.IsGlass) // напиток
+                {
+                    Pour();
+                }
+                else if (key0 == ConsoleKey.A && data.IsGlass) // добавка
+                {
+
+                }
+                else if (key0 == ConsoleKey.P && data.GetDrinks().Count > 0) // оплата
+                {
+                    Pay();
+                }
+                else if (key0 == ConsoleKey.Q) // виход
+                {
+                    Environment.Exit(0);
+                }
+#endif
+                #endregion
             }
         }
 
@@ -615,60 +635,73 @@ namespace App0.Calculate
                     // керування розміром напою
                     if (data.GetDrinks().Count > 0)
                     {
-                        // Блокуємо доступ іншим потокам
-                        lock (block)
+                        do
                         {
-                            do
+                            // оновлення заповлення
+                            Order();
+
+                            // установка курсора
+                            Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                            // очистка
+                            Console.Write(new string(' ', Console.WindowWidth - 4));
+                            // установка курсора
+                            Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                            #region Керування рівнем напою
+                            Print("Выберите: ", ConsoleColor.White);
+                            Print("N - очистить, ", ConsoleColor.Yellow);
+                            Print("+ добавить, ", ConsoleColor.Green);
+                            Print("- удалить, ", ConsoleColor.Cyan);
+                            Print("Q - назад. ", ConsoleColor.Red);
+
+                            // введення клавіши
+                            string key = null;
+                            key = Console.ReadLine().ToLower();
+
+                            // дія згідно вибору
+                            switch (key)
                             {
-                                // оновлення заповлення
-                                Order();
-
-                                // установка курсора
-                                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
-                                // очистка
-                                Console.Write(new string(' ', Console.WindowWidth - 4));
-                                // установка курсора
-                                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
-
-                                #region Керування рівнем напою
-                                Print("Выберите: ", ConsoleColor.White);
-                                Print("N - очистить, ", ConsoleColor.Yellow);
-                                Print("+ добавить, ", ConsoleColor.Green);
-                                Print("- удалить, ", ConsoleColor.Cyan);
-                                Print("Esc - назад.", ConsoleColor.Red);
-
-                                // введення клавіши
-                                ConsoleKey? key = null;
-                                key = Console.ReadKey(true).Key;
-
-                                // дія згідно вибору
-                                switch (key)
-                                {
-                                    case ConsoleKey.N:  // очистить
-                                        key = null;
-                                        data.RemoveDrinks();
-                                        break;
-                                    case ConsoleKey.Add:  // додати
-                                        key = null;
-                                        data.AddDrink(data.GetDrinks()[0]);
-                                        break;
-                                    case ConsoleKey.Subtract:  // убрати
-                                        key = null;
-                                        data.RemoveDrink();
-                                        break;
-                                    case ConsoleKey.Escape:  // виход
-                                        key = null;
-                                        return;
-                                }
-
-                                // якщо ми все видалили то необхідно піти в меню вище
-                                if (data.GetDrinks().Count == 0)
-                                {
+                                case "n":  // очистить
+                                    data.RemoveDrinks();
                                     break;
-                                }
-                                #endregion
-                            } while (true);
-                        }
+                                case "+":  // додати
+                                    data.AddDrink(data.GetDrinks()[0]);
+                                    break;
+                                case "-":  // убрати
+                                    data.RemoveDrink();
+                                    break;
+                                case "q":  // виход
+                                    return;
+                            }
+
+                            #region Тестування глюків зчитування клавіш в косолі
+#if false
+                            if (key == ConsoleKey.N) // очистить
+                            {
+                                data.RemoveDrinks();
+                            }
+                            else if (key == ConsoleKey.Add) // додати
+                            {
+                                data.AddDrink(data.GetDrinks()[0]);
+                            }
+                            else if (key == ConsoleKey.Subtract) // убрати
+                            {
+                                data.RemoveDrink();
+                            }
+                            else if (key == ConsoleKey.Escape) // виход
+                            {
+                                return;
+                            } 
+#endif 
+                            #endregion
+
+                            // якщо ми все видалили то необхідно піти в меню вище
+                            if (data.GetDrinks().Count == 0)
+                            {
+                                break;
+                            }
+                            #endregion
+                        } while (true);
                     }
                 } while (true);
             }
@@ -753,15 +786,17 @@ namespace App0.Calculate
 
                 // Вивід
                 Print("Спасибо за оплату. Нажмите клавишу для продолжения...", ConsoleColor.Green);
+
             }
 
             // очікування натискання клавіші
-            Console.ReadKey(true);
+            Console.Read();
+            // Примітка. При вложених методах в яких на різних рівнях
+            // використовується Console.ReadKey(); вилітає на самий вищий рівень
+            // тому у рівнях нижче не варно використовувати "ReadKey"
 
             // чистка даних
             data.Clear();
-            // оновлення замовлення
-            Order();
         }
 
         /// <summary>

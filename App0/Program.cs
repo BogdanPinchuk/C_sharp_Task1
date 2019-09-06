@@ -48,7 +48,7 @@ namespace App0
             {
 #if true
                 // Запуск інформатора який оновлюватиме БД
-                Checker checker = new Checker(file);
+                //Checker checker = new Checker(file);
 #endif
                 // запуск для тестування
                 new Service(region).Menu();
