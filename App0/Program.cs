@@ -53,7 +53,6 @@ namespace App0
             }
             #endregion
 
-
             // delay
             Console.ReadKey(true);
         }
