@@ -260,6 +260,37 @@ namespace App0.Calculate
             => additivs = additivs ?? new List<IAdditiv>();
 
         /// <summary>
+        /// Видалити 1 порцію напою
+        /// </summary>
+        public void RemoveDrink()
+        {
+            drinks = drinks ?? new List<IDrink>();
+            
+            if (drinks.Count > 0)
+            {
+                drinks.RemoveAt(0);
+            }
+        }
+
+        /// <summary>
+        /// Видалити весь напій
+        /// </summary>
+        public void RemoveDrinks()
+            => drinks?.Clear();
+
+        /// <summary>
+        /// Видалити 1 порцію добавки
+        /// </summary>
+        public void RemoveAdditiv(IAdditiv product)
+            => additivs?.Remove(product);
+
+        /// <summary>
+        /// Видалити всі добавки
+        /// </summary>
+        public void RemoveAdditivs()
+            => additivs?.Clear();
+
+        /// <summary>
         /// Очищення замовлення
         /// </summary>
         public void Clear()

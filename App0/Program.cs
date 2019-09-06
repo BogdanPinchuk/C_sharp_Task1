@@ -81,6 +81,12 @@ namespace App0
 
             order.Clear(); 
 #endif
+            //List<int> list = new List<int>();
+            //list.Add(125);
+            //list.Add(126);
+            //list.Add(127);
+            //list.Add(128);
+            //list.Remove(124);
 
             // delay
             Console.ReadKey(true);
