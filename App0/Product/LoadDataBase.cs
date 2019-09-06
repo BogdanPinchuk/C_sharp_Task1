@@ -37,7 +37,7 @@ namespace App0.Product
         /// <summary>
         /// Перевірка успошності завантаження БД
         /// </summary>
-        public static bool Succesfull { get; private set; } = false;
+        public static bool Successful { get; private set; } = false;
         /// <summary>
         /// Статус оновлення БД, 
         /// true - оновлення було, false - оновлення не було
@@ -114,7 +114,7 @@ namespace App0.Product
                     IsUpdateDB = true;
 
                     // установка прапора успошного завантаження БД
-                    Succesfull = true;
+                    Successful = true;
                 }
             }
             catch (OleDbException ex)

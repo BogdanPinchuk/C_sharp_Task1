@@ -278,7 +278,7 @@ namespace App0.Calculate
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
                 StringBuilder drink = new StringBuilder()
-                    .Append("Напитки: (70 млм)");
+                    .Append("Напитки:");
 
                 // Вивід
                 Console.Write(drink.ToString());
@@ -291,7 +291,8 @@ namespace App0.Calculate
                     // установка курсора
                     Console.SetCursorPosition(2, 7 + i.ID);
                     Console.Write($"  {i.ID}. {i.Name,-4} - " +
-                        $"{i.Price.ToString("C2", new CultureInfo(region.Name))}");
+                        $"{i.Price.ToString("C2", new CultureInfo(region.Name))} " +
+                        $": {i.Size, 3} {((i.TypeOfValue == TypeValue.Volume) ? "мл" : "г")}");
                 }
 
                 // скидання налаштувань
@@ -314,7 +315,7 @@ namespace App0.Calculate
                 Console.ForegroundColor = ConsoleColor.Magenta;
 
                 StringBuilder aditiv = new StringBuilder()
-                    .Append("Добавки: (10 мл/10 г)");
+                    .Append("Добавки:");
 
                 // Вивід
                 Console.Write(aditiv.ToString());
@@ -327,7 +328,8 @@ namespace App0.Calculate
                     // установка курсора
                     Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 7 + i.ID);
                     Console.Write($"  {i.ID}. {i.Name,-6} - " +
-                        $"{i.Price.ToString("C2", new CultureInfo(region.Name))}");
+                        $"{i.Price.ToString("C2", new CultureInfo(region.Name))} " +
+                        $": {i.Size, 3} {((i.TypeOfValue == TypeValue.Volume) ? "мл" : "г")}");
                 }
 
                 // скидання налаштувань
@@ -499,14 +501,9 @@ namespace App0.Calculate
                 // Головне меню вибору
                 MenuChange();
 
-                // введення клавіши
+                // клавіша вводу
                 ConsoleKey? key = null;
                 key = Console.ReadKey(true).Key;
-                // Примітка. При виході із методів, якимось відбувається зебреження
-                // останньої нажатої клавіши, а тому, якщо була нажата клавіша виходу
-                // то воно підставляє її сюди і виходить з програми повністю,
-                // щоб цього не було, необхідно очишувати змінну під клавішу через 
-                // Nullable змінні
 
                 // дія згідно вибору
                 switch (key)
@@ -529,7 +526,7 @@ namespace App0.Calculate
                     case ConsoleKey.A:  // добавка
                         if (data.IsGlass)
                         {
-
+                            Insert();
                         }
                         break;
                     case ConsoleKey.P:  // оплата
@@ -538,52 +535,26 @@ namespace App0.Calculate
                             Pay();
                         }
                         break;
-                    case ConsoleKey.Q:  // виход
+                    case ConsoleKey.Escape:  // виход
                         Environment.Exit(0);
                         break;
-                        //TODO: додать оплату (запис в лог файл і очистка)
                 }
-
-                #region Тестування глюків зчитування клавіш в косолі
-#if false
-                if (key0 == ConsoleKey.N && data.IsGlass)// очистить
-                {
-                    data.Clear();
-                }
-                else if (key0 == ConsoleKey.G) // стаканчик
-                {
-                    SizeGlass();
-                }
-                else if (key0 == ConsoleKey.D && data.IsGlass) // напиток
-                {
-                    Pour();
-                }
-                else if (key0 == ConsoleKey.A && data.IsGlass) // добавка
-                {
-
-                }
-                else if (key0 == ConsoleKey.P && data.GetDrinks().Count > 0) // оплата
-                {
-                    Pay();
-                }
-                else if (key0 == ConsoleKey.Q) // виход
-                {
-                    Environment.Exit(0);
-                }
-#endif
-                #endregion
             }
         }
 
         /// <summary>
-        /// Налити напій
+        /// Вкинути добавки
         /// </summary>
-        private void Pour()
+        private void Insert()
         {
+            if (aditivs.Count == 0)
+            {
+                return;
+            }
+
             // Блокуємо доступ іншим потокам
             lock (block)
             {
-                // перевірка введеного значення
                 do
                 {
                     // оновлення заповлення
@@ -593,6 +564,117 @@ namespace App0.Calculate
                     Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
                     // очистка
                     Console.Write(new string(' ', Console.WindowWidth - 4));
+                    // установка курсора
+                    Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                    // зміна кольору
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    // Вивід
+                    Console.Write("Выберите добавку: ");
+                    // скидання налаштувань
+                    Console.ResetColor();
+
+                    // введення
+                    string key = Console.ReadLine();
+
+                    // при натисканні виходу
+                    if ((key.ToLower() == ConsoleKey.Q.ToString().ToLower()))
+                    {
+                        return;
+                    }
+
+                    // спроба перевести в числове значення, а next сигналізує вірність вводу
+                    int position = 0;
+                    bool next = int.TryParse(key, out position);
+
+                    // аналіз чи можна продовжувати, якщо так то записуємо вибір користувача
+                    // також аналізуємо чи введені дані у допустимому діапазоні
+                    if (!next || !(0 < position && position <= aditivs.Count))
+                    {
+                        continue;
+                    }
+
+                    // аналіз вибраної добавки, якщо така добавка вже є, 
+                    // то закодимо в меню управління нею, а якщо нема то просто додаємо
+                    if (!data.GetAdditivs().Contains(aditivs[position - 1]))
+                    {
+                        // додавання добавки
+                        data.AddAdditiv(aditivs[position - 1]);
+                    }
+
+                    // якщо така добавка є то заходимо в меню щоб керувати нею
+                    if (data.GetAdditivs().Contains(aditivs[position - 1]))
+                    {
+                        do
+                        {
+                            // оновлення заповлення
+                            Order();
+
+                            // установка курсора
+                            Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                            // очистка
+                            Console.Write(new string(' ', Console.WindowWidth - 4));
+                            // установка курсора
+                            Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+
+                            #region Керування рівнем добавки
+                            Print("Выберите: ", ConsoleColor.White);
+                            Print("N - очистить, ", ConsoleColor.Yellow);
+                            Print("+ добавить, ", ConsoleColor.Green);
+                            Print("- удалить, ", ConsoleColor.Cyan);
+                            Print("Q - назад. ", ConsoleColor.Red);
+
+                            // введення клавіши
+                            string key0 = Console.ReadLine().ToLower();
+
+                            // дія згідно вибору (в даному випадку не "switch" так як 
+                            // необхідно вийти лише з цього цикла а не методу)
+                            if (key0 == "n") // очистить
+                            {
+                                data.RemoveAdditivs();
+                            }
+                            else if (key0 == "+")
+                            {
+                                data.AddAdditiv(aditivs[position - 1]);
+                            }
+                            else if (key0 == "-")
+                            {
+                                data.RemoveAdditiv(aditivs[position - 1]);
+                            }
+                            else if (key0 == "q")
+                            {
+                                break;
+                            }
+                            #endregion
+                        } while (true);
+                    }
+
+                } while (true);
+            }
+        }
+
+        /// <summary>
+        /// Налити напій
+        /// </summary>
+        private void Pour()
+        {
+            if (drinks.Count == 0)
+            {
+                return;
+            }
+
+            // Блокуємо доступ іншим потокам
+            lock (block)
+            {
+                do
+                {
+                    // оновлення заповлення
+                    Order();
+
+                    // установка курсора
+                    Console.SetCursorPosition(1, 17 + Math.Max(drinks.Count, aditivs.Count));
+                    // очистка
+                    Console.Write(new string(' ', Console.WindowWidth - 2));
                     // установка курсора
                     Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
 
@@ -641,9 +723,9 @@ namespace App0.Calculate
                             Order();
 
                             // установка курсора
-                            Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                            Console.SetCursorPosition(1, 17 + Math.Max(drinks.Count, aditivs.Count));
                             // очистка
-                            Console.Write(new string(' ', Console.WindowWidth - 4));
+                            Console.Write(new string(' ', Console.WindowWidth - 2));
                             // установка курсора
                             Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
 
@@ -674,27 +756,6 @@ namespace App0.Calculate
                                     return;
                             }
 
-                            #region Тестування глюків зчитування клавіш в косолі
-#if false
-                            if (key == ConsoleKey.N) // очистить
-                            {
-                                data.RemoveDrinks();
-                            }
-                            else if (key == ConsoleKey.Add) // додати
-                            {
-                                data.AddDrink(data.GetDrinks()[0]);
-                            }
-                            else if (key == ConsoleKey.Subtract) // убрати
-                            {
-                                data.RemoveDrink();
-                            }
-                            else if (key == ConsoleKey.Escape) // виход
-                            {
-                                return;
-                            } 
-#endif 
-                            #endregion
-
                             // якщо ми все видалили то необхідно піти в меню вище
                             if (data.GetDrinks().Count == 0)
                             {
@@ -723,9 +784,9 @@ namespace App0.Calculate
                 do
                 {
                     // установка курсора
-                    Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                    Console.SetCursorPosition(1, 17 + Math.Max(drinks.Count, aditivs.Count));
                     // очистка
-                    Console.Write(new string(' ', Console.WindowWidth - 4));
+                    Console.Write(new string(' ', Console.WindowWidth - 2));
                     // установка курсора
                     Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
 
@@ -776,17 +837,16 @@ namespace App0.Calculate
             lock (block)
             {
                 // установка курсора
-                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                Console.SetCursorPosition(1, 17 + Math.Max(drinks.Count, aditivs.Count));
 
                 // очистка
-                Console.Write(new string(' ', Console.WindowWidth - 4));
+                Console.Write(new string(' ', Console.WindowWidth - 2));
 
                 // установка курсора
                 Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
 
                 // Вивід
                 Print("Спасибо за оплату. Нажмите клавишу для продолжения...", ConsoleColor.Green);
-
             }
 
             // очікування натискання клавіші
@@ -794,6 +854,8 @@ namespace App0.Calculate
             // Примітка. При вложених методах в яких на різних рівнях
             // використовується Console.ReadKey(); вилітає на самий вищий рівень
             // тому у рівнях нижче не варно використовувати "ReadKey"
+
+            //TODO: додать оплату (запис в лог файл і очистка)
 
             // чистка даних
             data.Clear();
@@ -808,21 +870,21 @@ namespace App0.Calculate
             lock (block)
             {
                 // установка курсора
-                Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
+                Console.SetCursorPosition(1, 17 + Math.Max(drinks.Count, aditivs.Count));
 
                 // очистка
-                Console.Write(new string(' ', Console.WindowWidth - 4));
+                Console.Write(new string(' ', Console.WindowWidth - 2));
 
                 // установка курсора
                 Console.SetCursorPosition(2, 17 + Math.Max(drinks.Count, aditivs.Count));
 
                 #region Menu of change
-                Print("Выберите: ", ConsoleColor.White);
+                Print("Меню: ", ConsoleColor.White);
                 Print("N - очистить, ", ConsoleColor.Yellow);
                 Print("G - стаканчик, ", ConsoleColor.Green);
                 Print("D - напиток, ", ConsoleColor.Cyan);
                 Print("A - добавка, ", ConsoleColor.Magenta);
-                Print("Q - выход.", ConsoleColor.Red);
+                Print("Esc - выход. ", ConsoleColor.Red);
 
                 // скидання налаштувань
                 Console.ResetColor();

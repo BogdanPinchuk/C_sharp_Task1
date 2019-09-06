@@ -22,7 +22,6 @@ namespace App0
 
             // Заголовок програми
             Console.Title = "Fresh drinks";
-#if true
 
             #region Установка культури
             // В умові вказані $ але можливо 
@@ -44,49 +43,16 @@ namespace App0
             LoadDataBase.UpLoadDataBase(path + file);
 
             // якщо БД завантажена успошно запускаємо обробку запитів користувача
-            if (LoadDataBase.Succesfull)
+            if (LoadDataBase.Successful)
             {
-#if true
                 // Запуск інформатора який оновлюватиме БД
-                //Checker checker = new Checker(file);
-#endif
+                Checker checker = new Checker(file);
+      
                 // запуск для тестування
                 new Service(region).Menu();
             }
             #endregion
 
-#endif
-
-#if false
-            Console.Clear();
-
-            // тестування
-            SOrder order = new SOrder
-            {
-                Glass = TypeOfGlass.ml110
-            };
-
-            Console.WriteLine(order.IsGlass);
-            Console.WriteLine(order.Capacity);
-            Console.WriteLine(order.Free);
-            Console.WriteLine();
-
-            for (int i = 0; i < 10; i++)
-            {
-                order.AddDrink(new SDrink(i, "Ad", 10, 10, TypeValue.Weight));
-                order.AddAdditiv(new SAdditiv(8, "Dr", 1, 10, TypeValue.Volume));
-                //Console.WriteLine(order.Volume());
-                Console.WriteLine(order.Price);
-            }
-
-            order.Clear(); 
-#endif
-            //List<int> list = new List<int>();
-            //list.Add(125);
-            //list.Add(126);
-            //list.Add(127);
-            //list.Add(128);
-            //list.Remove(124);
 
             // delay
             Console.ReadKey(true);
