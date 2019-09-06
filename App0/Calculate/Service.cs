@@ -80,6 +80,10 @@ namespace App0.Calculate
         /// Загальне замовлення
         /// </summary>
         private SOrder data;
+        /// <summary>
+        /// Дані по замовленню, необхідні для лог-файла
+        /// </summary>
+        private string infoOrder = string.Empty;
 
         /// <summary>
         /// Конструктор діалогу
@@ -292,7 +296,7 @@ namespace App0.Calculate
                     Console.SetCursorPosition(2, 7 + i.ID);
                     Console.Write($"  {i.ID}. {i.Name,-4} - " +
                         $"{i.Price.ToString("C2", new CultureInfo(region.Name))} " +
-                        $": {i.Size, 3} {((i.TypeOfValue == TypeValue.Volume) ? "мл" : "г")}");
+                        $": {i.Size,3} {((i.TypeOfValue == TypeValue.Volume) ? "мл" : "г")}");
                 }
 
                 // скидання налаштувань
@@ -329,7 +333,7 @@ namespace App0.Calculate
                     Console.SetCursorPosition(Console.WindowWidth / 2 + 2, 7 + i.ID);
                     Console.Write($"  {i.ID}. {i.Name,-6} - " +
                         $"{i.Price.ToString("C2", new CultureInfo(region.Name))} " +
-                        $": {i.Size, 3} {((i.TypeOfValue == TypeValue.Volume) ? "мл" : "г")}");
+                        $": {i.Size,3} {((i.TypeOfValue == TypeValue.Volume) ? "мл" : "г")}");
                 }
 
                 // скидання налаштувань
@@ -371,7 +375,12 @@ namespace App0.Calculate
                     // зміна кольору
                     Console.ForegroundColor = ConsoleColor.Green;
                     // Вивід
-                    Console.Write($"G - {Enum.GetValues(typeof(TypeOfGlass)).Cast<TypeOfGlass>().ToList().IndexOf(data.Glass) + 1};");
+                    {
+                        string s = $"G - {Enum.GetValues(typeof(TypeOfGlass)).Cast<TypeOfGlass>().ToList().IndexOf(data.Glass) + 1};";
+                        // збереження даних для лог-файлу
+                        infoOrder = s;
+                        Console.Write(s);
+                    }
 
                     // Перевірка чи вибнано напій
                     if (data.GetDrinks().Count > 0)
@@ -379,7 +388,12 @@ namespace App0.Calculate
                         // зміна кольору
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         // Вивід
-                        Console.Write($" D - {data.GetDrinks()[0].ID}x{data.GetDrinks().Count};");
+                        {
+                            string s = $" D - {data.GetDrinks()[0].ID}x{data.GetDrinks().Count};";
+                            // збереження даних для лог-файлу
+                            infoOrder += s;
+                            Console.Write(s);
+                        }
                     }
 
                     // Перевірка чи вибнано добавки
@@ -400,7 +414,12 @@ namespace App0.Calculate
                         }
 
                         // Вивід
-                        Console.Write(s.ToString().TrimEnd(',') + "; ");
+                        {
+                            string s1 = s.ToString().TrimEnd(',') + "; ";
+                            // збереження даних для лог-файлу
+                            infoOrder += s1;
+                            Console.Write(s1);
+                        }
                     }
 
                     #region For MS Visual Studio 2019 and Windows 10
@@ -855,7 +874,13 @@ namespace App0.Calculate
             // використовується Console.ReadKey(); вилітає на самий вищий рівень
             // тому у рівнях нижче не варно використовувати "ReadKey"
 
-            //TODO: додать оплату (запис в лог файл і очистка)
+            // Збереження в лог-файд
+            string info = new StringBuilder()
+                .Append($"Price: {data.Price.ToString("C2", new CultureInfo(region.Name))}, ")
+                .Append($"Products: {infoOrder}")
+                .ToString();
+
+            new Thread(() => SaveLog.SaveOrder(info)).Start();
 
             // чистка даних
             data.Clear();
@@ -955,6 +980,15 @@ namespace App0.Calculate
                 ExstractingData(LoadDataBase.Products.Tables["Drinks"], drinks);
                 ExstractingData(LoadDataBase.Products.Tables["Additivs"], aditivs);
             }
+
+            // Збереження в лог-файд
+            string info = new StringBuilder()
+                .Append($"Glasses - {Enum.GetValues(typeof(TypeOfGlass)).Length}, ")
+                .Append($"Drinks - {drinks.Count}, ")
+                .Append($"Additivs - {aditivs.Count};")
+                .ToString();
+
+            new Thread(() => SaveLog.SaveUpdate(info)).Start();
         }
 
         /// <summary>

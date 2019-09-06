@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculate\Checker.cs" />
+    <Compile Include="Calculate\SaveLog.cs" />
     <Compile Include="Calculate\Service.cs" />
     <Compile Include="Calculate\SOrder.cs" />
     <Compile Include="Product\Extention.cs" />
