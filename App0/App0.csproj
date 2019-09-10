@@ -47,19 +47,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calculate\Checker.cs" />
-    <Compile Include="Calculate\SaveLog.cs" />
-    <Compile Include="Calculate\Service.cs" />
-    <Compile Include="Calculate\SOrder.cs" />
-    <Compile Include="Product\Extention.cs" />
-    <Compile Include="Product\IAdditiv.cs" />
-    <Compile Include="Product\IDrink.cs" />
-    <Compile Include="Product\IProduct.cs" />
-    <Compile Include="Product\LoadDataBase.cs" />
-    <Compile Include="Product\SAdditiv.cs" />
-    <Compile Include="Product\SDrink.cs" />
+    <Compile Include="M\Checker.cs" />
+    <Compile Include="M\SaveLog.cs" />
+    <Compile Include="P\Service.cs" />
+    <Compile Include="M\SOrder.cs" />
+    <Compile Include="M\Model.cs" />
+    <Compile Include="P\Presenter.cs" />
+    <Compile Include="M\Product\Extention.cs" />
+    <Compile Include="M\Product\IAdditiv.cs" />
+    <Compile Include="M\Product\IDrink.cs" />
+    <Compile Include="M\Product\IProduct.cs" />
+    <Compile Include="M\LoadDataBase.cs" />
+    <Compile Include="M\Product\SAdditiv.cs" />
+    <Compile Include="M\Product\SDrink.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="V\View.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -67,6 +70,7 @@
   <ItemGroup>
     <Content Include="Icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

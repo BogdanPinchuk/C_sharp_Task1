@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App0.Product
+namespace App0.M
 {
     /// <summary>
     /// Завантаження БД (бази даних)

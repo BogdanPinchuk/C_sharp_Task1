@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App0.Product
+namespace App0.M.Product
 {
     /// <summary>
-    /// Добавки
+    /// Напій
     /// </summary>
-    interface IAdditiv : IProduct { }
+    interface IDrink : IProduct { }
 }

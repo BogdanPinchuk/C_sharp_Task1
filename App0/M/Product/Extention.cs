@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 // Примітка. Так як типів виміру продукту є два: маса і об'єм,
 // то правильно б задатися булєвим типом даних при передачі в БД
 
-namespace App0.Product
+namespace App0.M.Product
 {
     /// <summary>
     /// Клас методів розширення

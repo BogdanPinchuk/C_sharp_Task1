@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using App0.Product;
+using App0.M.Product;
 
-namespace App0.Calculate
+namespace App0.M
 {
     /// <summary>
     /// Заказ

@@ -12,7 +12,7 @@ using App0.Product;
 // і в разі внесених в нього змін чи перезапису оновлювати
 // внутрішню автономну БД, без перезапуску програми
 
-namespace App0.Calculate
+namespace App0.M
 {
     /// <summary>
     /// Інформатор
@@ -83,4 +83,5 @@ namespace App0.Calculate
             => new Thread(LoadDataBase.UpLoadDataBase).Start();
         // запускаємо в окремому потоці по слабкій ссилці для оновлення БД
     }
+
 }

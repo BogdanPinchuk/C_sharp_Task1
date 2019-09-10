@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App0.Product
+namespace App0.V
 {
     /// <summary>
-    /// Напій
+    /// Вид, відображення
     /// </summary>
-    interface IDrink : IProduct { }
+    class View
+    {
+
+    }
 }

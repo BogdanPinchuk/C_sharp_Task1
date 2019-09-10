@@ -4,27 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App0.Product
+namespace App0.M.Product
 {
     /// <summary>
-    /// Структура напою
+    /// Структура добавки
     /// </summary>
-    struct SDrink : IDrink
+    struct SAdditiv : IAdditiv
     {
         /// <summary>
-        /// ID - напою
+        /// ID - добавки
         /// </summary>
         public int ID { get; private set; }
         /// <summary>
-        /// Назва напою
+        /// Назва добавки
         /// </summary>
         public string Name { get; private set; }
         /// <summary>
-        /// Ціна напою
+        /// Ціна добавки
         /// </summary>
         public double Price { get; private set; }
         /// <summary>
-        /// Тип в якому вимірюється напій
+        /// Тип в якому вимірюється добавка
         /// </summary>
         public double Size { get; private set; }
         /// <summary>
@@ -33,14 +33,14 @@ namespace App0.Product
         public TypeValue TypeOfValue { get; private set; }
 
         /// <summary>
-        /// Додавання напою
+        /// Додавання добавки
         /// </summary>
         /// <param name="id">ID</param>
         /// <param name="name">назва</param>
         /// <param name="price">ціна</param>
-        /// <param name="size">розмів виміру мл/г</param>
+        /// <param name="size">розмів виміру мл/</param>
         /// <param name="type">тип виміру вага/об'єм</param>
-        public SDrink(int id, string name, double price,
+        public SAdditiv(int id, string name, double price,
             double size, TypeValue type)
         {
             this.ID = id;
@@ -49,6 +49,5 @@ namespace App0.Product
             this.Size = size;
             this.TypeOfValue = type;
         }
-
     }
 }

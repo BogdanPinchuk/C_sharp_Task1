@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App0.Calculate
+namespace App0.M
 {
     /// <summary>
     /// Збереження даних в лог-файл
