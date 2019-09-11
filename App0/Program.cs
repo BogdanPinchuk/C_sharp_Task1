@@ -55,11 +55,6 @@ namespace App0
 {
     class Program
     {
-        /// <summary>
-        /// Керівник
-        /// </summary>
-        private static Presenter presenter;
-
         static void Main()
         {
             // Join Unicode
@@ -73,10 +68,7 @@ namespace App0
                 file = "Product";       // назва файлу
 
             // створення і запуск керівника
-            presenter = new Presenter(path, file);
-
-            // запуск для тестування
-            new Service(region).Menu();
+            new Presenter(path, file);
 
             // delay
             Console.ReadKey(true);

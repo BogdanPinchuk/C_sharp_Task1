@@ -4,7 +4,10 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
+using App0.M.Product;
 
 namespace App0.M
 {
@@ -13,6 +16,15 @@ namespace App0.M
     /// </summary>
     class Model
     {
+        /// <summary>
+        /// Делегат на відслідковування зміни БД
+        /// </summary>
+        public delegate void ChangeData();
+        /// <summary>
+        /// Подія яка відбувається при зміні БД
+        /// </summary>
+        public event ChangeData ChangeDB;
+
         /// <summary>
         /// Валюта
         /// </summary>
@@ -23,22 +35,15 @@ namespace App0.M
         }
 
         /// <summary>
-        /// Інформатор
-        /// </summary>
-        private readonly Checker checker;
-
-        /// <summary>
         /// Культура
         /// </summary>
-        public RegionInfo region { get; private set; }
-
+        public RegionInfo Region { get; private set; }
         /// <summary>
         /// Статус оновлення БД, 
         /// true - оновлення було, false - оновлення не було
         /// </summary>
         public bool IsUpdateDB
             => LoadDataBase.IsUpdateDB;
-
         /// <summary>
         /// Таблиці продуктів
         /// </summary>
@@ -52,11 +57,10 @@ namespace App0.M
                 }
             }
         }
-
         /// <summary>
-        /// Загальне замовлення
+        /// Набір стаканчиків
         /// </summary>
-        public SOrder Order { get; set; }
+        public int[] Glasses { get; private set; }
 
         /// <summary>
         /// Конструктор
@@ -72,12 +76,12 @@ namespace App0.M
             switch (momey)
             {
                 case Currency.National:
-                    region = RegionInfo.CurrentRegion;
+                    Region = RegionInfo.CurrentRegion;
                     break;
                 case Currency.Dollar:
-                    region = new RegionInfo("en-US");
+                    Region = new RegionInfo("en-US");
                     break;
-            } 
+            }
             #endregion
 
             // завантаження БД
@@ -87,7 +91,32 @@ namespace App0.M
             if (LoadDataBase.Successful)
             {
                 // Запуск інформатора який оновлюватиме БД
-                checker = new Checker(file);
+                new Checker(file);
+            }
+
+            // заповнення набору стаканчиків
+            Glasses = Enum.GetValues(typeof(TypeOfGlass)).Cast<int>().ToArray();
+
+            // запуск відслідковування змін БД
+            new Thread(CheckerChangeDB).Start();
+        }
+
+        /// <summary>
+        /// Перевірка зміни розмірів консолі і оновлення БД
+        /// </summary>
+        private void CheckerChangeDB()
+        {
+            while (true)
+            {
+                // якщо оновилася БД
+                if (LoadDataBase.IsUpdateDB && ChangeDB != null)
+                {
+                    // оновлюємо БД
+                    ChangeDB.Invoke();
+
+                    // ставимо, що БД "застаріла"
+                    LoadDataBase.IsUpdateDB = false;
+                }
             }
         }
 

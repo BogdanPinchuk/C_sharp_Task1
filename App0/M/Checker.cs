@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using App0.Product;
-
 // Примітка. Checker дозволяє слідкувати за файлом БД,
 // і в разі внесених в нього змін чи перезапису оновлювати
 // внутрішню автономну БД, без перезапуску програми

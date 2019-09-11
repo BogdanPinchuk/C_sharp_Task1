@@ -49,7 +49,6 @@
   <ItemGroup>
     <Compile Include="M\Checker.cs" />
     <Compile Include="M\SaveLog.cs" />
-    <Compile Include="P\Service.cs" />
     <Compile Include="M\SOrder.cs" />
     <Compile Include="M\Model.cs" />
     <Compile Include="P\Presenter.cs" />
@@ -63,7 +62,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="V\View.cs" />
-    <Compile Include="V\Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

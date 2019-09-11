@@ -15,7 +15,7 @@ namespace App0.M
         /// <summary>
         /// Спільний Log-File
         /// </summary>
-        private static string pathFile = "Log.txt";
+        private static readonly string pathFile = "Log.txt";
 
         /// <summary>
         /// Збереження інформації про покупку
